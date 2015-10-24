@@ -1,6 +1,6 @@
 (defproject slf4j-timbre "0.1.0-SNAPSHOT"
   :description "SLF4J binding for Timbre"
-  :url "https://github.com/ptaoussanis/timbre"
+  :url "https://github.com/fzakaria/slf4j-timbre"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
