@@ -1,4 +1,4 @@
-(defproject com.fzakaria/slf4j-timbre "0.1.0-SNAPSHOT"
+(defproject com.fzakaria/slf4j-timbre "0.2"
   :description "SLF4J binding for Timbre"
   :url "https://github.com/fzakaria/slf4j-timbre"
   :license {:name "Eclipse Public License"
@@ -21,5 +21,8 @@
   :prep-tasks ["compile" "javac" "compile"]
 
   :aot :all
+
+  :scm {:name "git"
+        :url "https://github.com/fzakaria/slf4j-timbre"}
 
   )
