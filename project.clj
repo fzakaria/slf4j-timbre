@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [com.taoensso/timbre "4.1.4"]
                  [org.slf4j/slf4j-api "1.7.12"]
-                 [junit/junit "4.11"]]
+                 [junit/junit "4.12"]]
 
   :plugins [[lein-ancient "0.6.5"]
             [lein-junit "1.1.8"]]
