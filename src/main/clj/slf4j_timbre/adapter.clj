@@ -38,8 +38,9 @@
 
 (defn -debug
   ([this msg]
-   (timbre/debug msg)))
-
+   (timbre/debug msg))
+  ([this msg throwable]
+   (timbre/debug throwable msg)))
 
 (defn -isInfoEnabled
   [this]
