@@ -5,18 +5,16 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [com.taoensso/timbre "4.1.4"]
-                 [org.slf4j/slf4j-api "1.7.12"]
-                 [junit/junit "4.12"]]
+                 [org.slf4j/slf4j-api "1.7.12"]]
 
-  :plugins [[lein-ancient "0.6.5"]
-            [lein-junit "1.1.8"]]
+  :plugins [[lein-ancient "0.6.5"]]
 
-  :source-paths ["src/main/clj"]
-  :test-paths ["src/test/clj"]
+  :profiles {:dev {:dependencies [[midje "1.8.1"]]
+                   :plugins [[lein-midje "3.2"]]}}
 
-  :java-source-paths ["src/main/java" "src/test/java"]
+  :source-paths ["src/clj"]
 
-  :junit ["test/java"]
+  :java-source-paths ["src/java"]
 
   :prep-tasks ["compile" "javac" "compile"]
 
