@@ -16,7 +16,7 @@
 
   :java-source-paths ["src/java"]
 
-  :prep-tasks ["compile" "javac" "compile"]
+  :prep-tasks ["compile" "javac"]
 
   :aot :all
 
