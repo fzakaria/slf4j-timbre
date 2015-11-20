@@ -15,7 +15,7 @@ You'll also want to make sure all other logging APIs are wrapped by SLF4J.
 In your **project.clj** include the following:
 
     [org.slf4j/log4j-over-slf4j "1.7.12"]
-    [org.slf4j/jul-over-slf4j "1.7.12"]
+    [org.slf4j/jul-to-slf4j "1.7.12"]
     [org.slf4j/jcl-over-slf4j "1.7.12"]
 
 
