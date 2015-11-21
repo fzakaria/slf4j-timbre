@@ -9,14 +9,14 @@
 
 (defn -init
 	[]
-	[[] (ref {})])
+	[[] (atom {})])
 
 (defn -getLogger
 	[this logger-name]
-	(dosync
-		(let [loggers (.state this)]
-			(if-let [existing (get @loggers logger-name)]
-				existing
-				(let [new-logger (TimbreLoggerAdapter.)]
-					(alter loggers assoc logger-name new-logger)
-					new-logger)))))
+	(let [loggers (.state this) loggers-map @loggers]
+		(if-let [existing (get loggers-map logger-name)]
+			existing
+			(let [new-logger (TimbreLoggerAdapter.)]
+				(if (compare-and-set! loggers loggers-map (assoc loggers-map logger-name new-logger))
+					new-logger
+					(get @loggers logger-name))))))
