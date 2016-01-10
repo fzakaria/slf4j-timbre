@@ -15,11 +15,6 @@
 
   :source-paths ["src/clj"]
 
-  :java-source-paths ["src/java"]
-  :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
-
-  :prep-tasks ["compile" "javac"]
-
   :aot :all
 
   :scm {:name "git"
