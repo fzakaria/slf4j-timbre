@@ -76,4 +76,16 @@
 				(.debug "Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
 				(.trace "Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")])))
 			(count @log-entries))
-		=> 30))
+		=> 30)
+
+	(fact "simple string with marker"
+		(let [marker (org.slf4j.MarkerFactory/getMarker "marker1")]
+			(do
+				(doto logger
+					(.error marker "Hello Marker World")
+					(.warn marker "Hello Marker World")
+					(.info marker "Hello Marker World")
+					(.debug marker "Hello Marker World")
+					(.trace marker "Hello Marker World"))
+				(count @log-entries)))
+		=> 5))
