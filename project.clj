@@ -13,8 +13,6 @@
   :profiles {:dev {:dependencies [[midje "1.8.1"]]
                    :plugins [[lein-midje "3.2"]]}}
 
-  :source-paths ["src/clj"]
-
   :aot :all
 
   :scm {:name "git"
