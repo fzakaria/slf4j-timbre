@@ -88,4 +88,4 @@
 					(.debug marker "Hello Marker World")
 					(.trace marker "Hello Marker World"))
 				(count @log-entries)))
-		=> 5))
+		=> 35))
