@@ -10,7 +10,7 @@
   :plugins [[lein-ancient "0.6.5"]]
 
   :profiles {:dev {:dependencies [[midje "1.8.1"]
-                                  [org.slf4j/slf4j-api "1.7.13"]]
+                                  [org.slf4j/slf4j-api "1.7.14"]]
                    :plugins [[lein-midje "3.2"]]}}
 
   :aot :all
