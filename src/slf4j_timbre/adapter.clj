@@ -26,15 +26,21 @@
 					(~method msg#))
 				([msg# o1# o2#]
 					(let [ft# (MessageFormatter/format msg# o1# o2#)]
-						(~method (.getThrowable ft#) (.getMessage ft#))))
+						(if-let [t# (.getThrowable ft#)]
+							(~method t# (.getMessage ft#))
+							(~method (.getMessage ft#)))))
 				([msg# o#]
 					(cond
 						(string? o#)
 							(let [ft# (MessageFormatter/format msg# o#)]
-								(~method (.getThrowable ft#) (.getMessage ft#)))
+								(if-let [t# (.getThrowable ft#)]
+									(~method t# (.getMessage ft#))
+									(~method (.getMessage ft#))))
 						(.isArray (class o#))
 							(let [ft# (MessageFormatter/arrayFormat msg# o#)]
-								(~method (.getThrowable ft#) (.getMessage ft#)))
+								(if-let [t# (.getThrowable ft#)]
+									(~method t# (.getMessage ft#))
+									(~method (.getMessage ft#))))
 						(isa? (class o#) Throwable)
 							(~method o# msg#))))]
 			(when (~checker this#)
