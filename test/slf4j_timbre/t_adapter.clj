@@ -14,6 +14,7 @@
 
 	(fact "simple string"
 		(do
+			(swap! log-entries (constantly []))
 			(doto logger
 				(.error "Hello World")
 				(.warn "Hello World")
@@ -25,6 +26,7 @@
 
 	(fact "1 param"
 		(do
+			(swap! log-entries (constantly []))
 			(doto logger
 				(.error "Hello World {}" "Farid")
 				(.warn "Hello World {}" "Farid")
@@ -32,10 +34,11 @@
 				(.debug "Hello World {}" "Farid")
 				(.trace "Hello World {}" "Farid"))
 			(count @log-entries))
-		=> 10)
+		=> 5)
 
 	(fact "2 params"
 		(do
+			(swap! log-entries (constantly []))
 			(doto logger
 				(.error "Hello World {} {}" "Farid" "Zakaria")
 				(.warn "Hello World {} {}" "Farid" "Zakaria")
@@ -43,10 +46,11 @@
 				(.debug "Hello World {} {}" "Farid" "Zakaria")
 				(.trace "Hello World {} {}" "Farid" "Zakaria"))
 			(count @log-entries))
-		=> 15)
+		=> 5)
 
 	(fact "3 params"
 		(do
+			(swap! log-entries (constantly []))
 			(doto logger
 				(.error "Hello World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
 				(.warn "Hello World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
@@ -54,10 +58,11 @@
 				(.debug "Hello World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
 				(.trace "Hello World {} {} {}" (to-array ["What" "a" "Beautiful Day!"])))
 			(count @log-entries))
-		=> 20)
+		=> 5)
 
 	(fact "simple string + exception obj"
 		(do
+			(swap! log-entries (constantly []))
 			(doto logger
 				(.error "Hello World" (Exception. "test"))
 				(.warn "Hello World" (Exception. "test"))
@@ -65,10 +70,11 @@
 				(.debug "Hello World" (Exception. "test"))
 				(.trace "Hello World" (Exception. "test")))
 			(count @log-entries))
-		=> 25)
+		=> 5)
 
 	(fact "2 params + exception obj"
 		(do
+			(swap! log-entries (constantly []))
 			(doto logger
 				(.error "Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
 				(.warn "Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
@@ -76,4 +82,78 @@
 				(.debug "Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
 				(.trace "Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")])))
 			(count @log-entries))
-		=> 30))
+		=> 5)
+
+	(let [marker (org.slf4j.MarkerFactory/getMarker "marker1")]
+
+		(fact "simple string with marker"
+			(do
+				(swap! log-entries (constantly []))
+				(doto logger
+					(.error marker "Hello Marker World")
+					(.warn marker "Hello Marker World")
+					(.info marker "Hello Marker World")
+					(.debug marker "Hello Marker World")
+					(.trace marker "Hello Marker World"))
+				(count @log-entries))
+			=> 5)
+
+		(fact "1 param with marker"
+			(do
+				(swap! log-entries (constantly []))
+				(doto logger
+					(.error marker "Hello Marker World {}" "Farid")
+					(.warn marker "Hello Marker World {}" "Farid")
+					(.info marker "Hello Marker World {}" "Farid")
+					(.debug marker "Hello Marker World {}" "Farid")
+					(.trace marker "Hello Marker World {}" "Farid"))
+				(count @log-entries))
+			=> 5)
+
+		(fact "2 params with marker"
+			(do
+				(swap! log-entries (constantly []))
+				(doto logger
+					(.error marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.warn marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.info marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.debug marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.trace marker "Hello Marker World {} {}" "Farid" "Zakaria"))
+				(count @log-entries))
+			=> 5)
+
+		(fact "3 params with marker"
+			(do
+				(swap! log-entries (constantly []))
+				(doto logger
+					(.error marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.warn marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.info marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.debug marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.trace marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"])))
+				(count @log-entries))
+			=> 5)
+
+		(fact "simple string + exception obj with marker"
+			(do
+				(swap! log-entries (constantly []))
+				(doto logger
+					(.error marker "Hello Marker World" (Exception. "test"))
+					(.warn marker "Hello Marker World" (Exception. "test"))
+					(.info marker "Hello Marker World" (Exception. "test"))
+					(.debug marker "Hello Marker World" (Exception. "test"))
+					(.trace marker "Hello Marker World" (Exception. "test")))
+				(count @log-entries))
+			=> 5)
+
+		(fact "2 params + exception obj with marker"
+			(do
+				(swap! log-entries (constantly []))
+				(doto logger
+					(.error marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.warn marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.info marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.debug marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.trace marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")])))
+				(count @log-entries))
+			=> 5)))
