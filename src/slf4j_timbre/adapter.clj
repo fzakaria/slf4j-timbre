@@ -38,7 +38,7 @@
 						(isa? (class o#) Throwable)
 							(~method o# msg#))))]
 			(if (isa? (class (first args#)) Marker)
-				(apply inner# (rest args#))
+				(timbre/with-context {:marker (.getName (first args#))} (apply inner# (rest args#)))
 				(apply inner# args#)))))
 
 (def -error (wrap timbre/error))
