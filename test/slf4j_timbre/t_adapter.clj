@@ -78,8 +78,9 @@
 			(count @log-entries))
 		=> 30)
 
-	(fact "simple string with marker"
-		(let [marker (org.slf4j.MarkerFactory/getMarker "marker1")]
+	(let [marker (org.slf4j.MarkerFactory/getMarker "marker1")]
+
+		(fact "simple string with marker"
 			(do
 				(doto logger
 					(.error marker "Hello Marker World")
@@ -87,5 +88,60 @@
 					(.info marker "Hello Marker World")
 					(.debug marker "Hello Marker World")
 					(.trace marker "Hello Marker World"))
-				(count @log-entries)))
-		=> 35))
+				(count @log-entries))
+			=> 35)
+
+		(fact "1 param with marker"
+			(do
+				(doto logger
+					(.error marker "Hello Marker World {}" "Farid")
+					(.warn marker "Hello Marker World {}" "Farid")
+					(.info marker "Hello Marker World {}" "Farid")
+					(.debug marker "Hello Marker World {}" "Farid")
+					(.trace marker "Hello Marker World {}" "Farid"))
+				(count @log-entries))
+			=> 40)
+
+		(fact "2 params with marker"
+			(do
+				(doto logger
+					(.error marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.warn marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.info marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.debug marker "Hello Marker World {} {}" "Farid" "Zakaria")
+					(.trace marker "Hello Marker World {} {}" "Farid" "Zakaria"))
+				(count @log-entries))
+			=> 45)
+
+		(fact "3 params with marker"
+			(do
+				(doto logger
+					(.error marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.warn marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.info marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.debug marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"]))
+					(.trace marker "Hello Marker World {} {} {}" (to-array ["What" "a" "Beautiful Day!"])))
+				(count @log-entries))
+			=> 50)
+
+		(fact "simple string + exception obj with marker"
+			(do
+				(doto logger
+					(.error marker "Hello Marker World" (Exception. "test"))
+					(.warn marker "Hello Marker World" (Exception. "test"))
+					(.info marker "Hello Marker World" (Exception. "test"))
+					(.debug marker "Hello Marker World" (Exception. "test"))
+					(.trace marker "Hello Marker World" (Exception. "test")))
+				(count @log-entries))
+			=> 55)
+
+		(fact "2 params + exception obj with marker"
+			(do
+				(doto logger
+					(.error marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.warn marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.info marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.debug marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")]))
+					(.trace marker "Hello Marker World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")])))
+				(count @log-entries))
+			=> 60)))
