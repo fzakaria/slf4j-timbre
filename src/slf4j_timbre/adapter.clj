@@ -3,26 +3,32 @@
 		:name com.github.fzakaria.slf4j.timbre.TimbreLoggerAdapter
 		:extends org.slf4j.helpers.MarkerIgnoringBase)
 	(:require [taoensso.timbre :as timbre])
-	(:import [org.slf4j.helpers FormattingTuple MarkerIgnoringBase MessageFormatter]))
+	(:import
+		[org.slf4j.helpers FormattingTuple MarkerIgnoringBase MessageFormatter]
+		org.slf4j.Marker))
 
 (defmacro ^:private wrap
 	[method]
-	`(fn
-		([_# msg#]
-			(~method msg#))
-		([_# msg# o1# o2#]
-			(let [ft# (MessageFormatter/format msg# o1# o2#)]
-				(~method (.getThrowable ft#) (.getMessage ft#))))
-		([_# msg# o#]
-			(cond
-				(string? o#)
-					(let [ft# (MessageFormatter/format msg# o#)]
-						(~method (.getThrowable ft#) (.getMessage ft#)))
-				(.isArray (class o#))
-					(let [ft# (MessageFormatter/arrayFormat msg# o#)]
-						(~method (.getThrowable ft#) (.getMessage ft#)))
-				(isa? (class o#) Throwable)
-					(~method o# msg#)))))
+	`(fn [_# & args#]
+		(letfn [(inner#
+				([msg#]
+					(~method msg#))
+				([msg# o1# o2#]
+					(let [ft# (MessageFormatter/format msg# o1# o2#)]
+						(~method (.getThrowable ft#) (.getMessage ft#))))
+				([msg# o#]
+					(cond
+						(string? o#)
+							(let [ft# (MessageFormatter/format msg# o#)]
+								(~method (.getThrowable ft#) (.getMessage ft#)))
+						(.isArray (class o#))
+							(let [ft# (MessageFormatter/arrayFormat msg# o#)]
+								(~method (.getThrowable ft#) (.getMessage ft#)))
+						(isa? (class o#) Throwable)
+							(~method o# msg#))))]
+			(if (isa? (class (first args#)) Marker)
+				(apply inner# (rest args#))
+				(apply inner# args#)))))
 
 (def -error (wrap timbre/error))
 (def -warn  (wrap timbre/warn))
