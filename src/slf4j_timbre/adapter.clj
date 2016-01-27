@@ -18,36 +18,46 @@
 	[this]
 	(.state this))
 
-(defn inner
-	([level msg]
-		(timbre/log-call level :p [msg]))
-	([level msg o1 o2]
-		(let [ft (MessageFormatter/format msg o1 o2)]
-			(if-let [t (.getThrowable ft)]
-				(timbre/log-call level :p [t (.getMessage ft)])
-				(timbre/log-call level :p [(.getMessage ft)]))))
-	([level msg o]
-		(cond
-			(string? o)
-				(let [ft (MessageFormatter/format msg o)]
-					(if-let [t (.getThrowable ft)]
-						(timbre/log-call level :p [t (.getMessage ft)])
-						(timbre/log-call level :p [(.getMessage ft)])))
-			(.isArray (class o))
-				(let [ft (MessageFormatter/arrayFormat msg o)]
-					(if-let [t (.getThrowable ft)]
-						(timbre/log-call level :p [t (.getMessage ft)])
-						(timbre/log-call level :p [(.getMessage ft)])))
-			(isa? (class o) Throwable)
-				(timbre/log-call level :p [o msg]))))
+(defn make-inner
+	[level {:keys [?ns-str ?file ?line]}]
+	(fn
+		([msg]
+			(timbre/log-call level :p [msg] {:?ns-str ?ns-str :?file ?file :?line ?line}))
+		([msg o1 o2]
+			(let [ft (MessageFormatter/format msg o1 o2)]
+				(if-let [t (.getThrowable ft)]
+					(timbre/log-call level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
+					(timbre/log-call level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line}))))
+		([msg o]
+			(cond
+				(string? o)
+					(let [ft (MessageFormatter/format msg o)]
+						(if-let [t (.getThrowable ft)]
+							(timbre/log-call level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
+							(timbre/log-call level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})))
+				(.isArray (class o))
+					(let [ft (MessageFormatter/arrayFormat msg o)]
+						(if-let [t (.getThrowable ft)]
+							(timbre/log-call level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
+							(timbre/log-call level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})))
+				(isa? (class o) Throwable)
+					(timbre/log-call level :p [o msg] {:?ns-str ?ns-str :?file ?file :?line ?line})))))
 
 (defmacro ^:private wrap
 	[level]
 	`(fn [this# & args#]
 		(when (timbre/log? ~level)
-			(if (isa? (class (first args#)) Marker)
-				(timbre/with-context {:marker (.getName (first args#))} (apply inner ~level (rest args#)))
-				(apply inner ~level args#)))))
+			(let
+				[stack#  (.getStackTrace (Thread/currentThread))
+				 caller# (second (drop-while #(not= (.getName (.getClass this#)) (.getClassName %)) stack#))
+				 opts#
+					{:?ns-str (.getName this#)
+					 :?file   (.getFileName caller#)
+					 :?line   (.getLineNumber caller#)}
+				 inner# (make-inner ~level opts#)]
+				(if (isa? (class (first args#)) Marker)
+					(timbre/with-context {:marker (.getName (first args#))} (apply inner# (rest args#)))
+					(apply inner# args#))))))
 
 (def -error (wrap :error))
 (def -warn  (wrap :warn))
