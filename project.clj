@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [com.taoensso/timbre "4.2.1"]
+                 [com.taoensso/timbre "4.3.0-SNAPSHOT"]
                  [org.slf4j/slf4j-api "1.7.14"]]
 
   :plugins [[lein-ancient "0.6.5"]]
