@@ -8,7 +8,6 @@
 		[[org.clojure/clojure "1.7.0"]
 		 [com.taoensso/timbre "4.3.0-SNAPSHOT"]
 		 [org.slf4j/slf4j-api "1.7.14"]]
-	:plugins [[lein-ancient "0.6.5"]]
 	:profiles
 		{:dev
 			{:dependencies [[midje "1.8.3"]]
