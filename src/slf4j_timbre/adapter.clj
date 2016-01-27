@@ -19,7 +19,7 @@
 	(.state this))
 
 (defmacro ^:private wrap
-	[level checker]
+	[level]
 	`(fn [this# & args#]
 		(letfn [(inner#
 				([msg#]
@@ -43,10 +43,16 @@
 									(timbre/log-call ~level :p [(.getMessage ft#)])))
 						(isa? (class o#) Throwable)
 							(timbre/log-call ~level :p [o# msg#]))))]
-			(when (~checker this#)
+			(when (timbre/log? ~level)
 				(if (isa? (class (first args#)) Marker)
 					(timbre/with-context {:marker (.getName (first args#))} (apply inner# (rest args#)))
 					(apply inner# args#))))))
+
+(def -error (wrap :error))
+(def -warn  (wrap :warn))
+(def -info  (wrap :info))
+(def -debug (wrap :debug))
+(def -trace (wrap :trace))
 
 (defn -isErrorEnabled
 	([_]   (timbre/log? :error))
@@ -63,9 +69,3 @@
 (defn -isTraceEnabled
 	([_]   (timbre/log? :trace))
 	([_ _] (timbre/log? :trace)))
-
-(def -error (wrap :error -isErrorEnabled))
-(def -warn  (wrap :warn  -isWarnEnabled))
-(def -info  (wrap :info  -isInfoEnabled))
-(def -debug (wrap :debug -isDebugEnabled))
-(def -trace (wrap :trace -isTraceEnabled))
