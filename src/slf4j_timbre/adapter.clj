@@ -5,7 +5,8 @@
 		:state        state
 		:init         init
 		:constructors {[String] []})
-	(:require [taoensso.timbre :as timbre])
+	(:require
+		[taoensso.timbre :as timbre])
 	(:import
 		[org.slf4j.helpers FormattingTuple MessageFormatter]
 		org.slf4j.Marker))
@@ -18,7 +19,7 @@
 	[this]
 	(.state this))
 
-(defn make-inner
+(defn make-log-fn
 	[level {:keys [?ns-str ?file ?line]}]
 	(fn
 		([msg]
@@ -54,10 +55,11 @@
 					{:?ns-str (.getName this#)
 					 :?file   (.getFileName caller#)
 					 :?line   (.getLineNumber caller#)}
-				 inner# (make-inner ~level opts#)]
+				 log# (make-log-fn ~level opts#)]
 				(if (isa? (class (first args#)) Marker)
-					(timbre/with-context {:marker (.getName (first args#))} (apply inner# (rest args#)))
-					(apply inner# args#))))))
+					(timbre/with-context {:marker (.getName (first args#))}
+						(apply log# (rest args#)))
+					(apply log# args#))))))
 
 (def -error (wrap :error))
 (def -warn  (wrap :warn))
