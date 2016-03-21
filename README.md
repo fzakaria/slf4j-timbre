@@ -10,8 +10,6 @@ Add `slf4j-timbre` to your project dependencies:
 
 [![Clojars Project](http://clojars.org/com.fzakaria/slf4j-timbre/latest-version.svg)](http://clojars.org/com.fzakaria/slf4j-timbre)
 
-**`slf4j-timbre` requires `[org.slf4j/slf4j-api "1.7.14"]` or later so make sure your project or its dependencies are not pulling in an earlier version.**
-
 You'll also want to make sure all other logging APIs are wrapped by SLF4J by including the following:
 
 ```clojure
@@ -19,6 +17,10 @@ You'll also want to make sure all other logging APIs are wrapped by SLF4J by inc
 [org.slf4j/jul-to-slf4j "1.7.14"]
 [org.slf4j/jcl-over-slf4j "1.7.14"]
 ```
+
+**`slf4j-timbre` requires `[org.slf4j/slf4j-api "1.7.14"]` or later so make sure your project or its dependencies are not pulling in an earlier version.**
+
+The project also makes use of features introduced in `[com.taoensso/timbre "4.3.0-RC1"]` so make sure this dependency isn't being shadowed by an earlier version of Timbre in your project.
 
 ## License
 

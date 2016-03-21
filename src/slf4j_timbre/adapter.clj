@@ -5,7 +5,8 @@
 		:state        state
 		:init         init
 		:constructors {[String] []})
-	(:require [taoensso.timbre :as timbre])
+	(:require
+		[taoensso.timbre :as timbre])
 	(:import
 		[org.slf4j.helpers FormattingTuple MessageFormatter]
 		org.slf4j.Marker))
@@ -18,34 +19,53 @@
 	[this]
 	(.state this))
 
-(defmacro ^:private wrap
-	[method]
-	`(fn [_# & args#]
-		(letfn [(inner#
-				([msg#]
-					(~method msg#))
-				([msg# o1# o2#]
-					(let [ft# (MessageFormatter/format msg# o1# o2#)]
-						(~method (.getThrowable ft#) (.getMessage ft#))))
-				([msg# o#]
-					(cond
-						(string? o#)
-							(let [ft# (MessageFormatter/format msg# o#)]
-								(~method (.getThrowable ft#) (.getMessage ft#)))
-						(.isArray (class o#))
-							(let [ft# (MessageFormatter/arrayFormat msg# o#)]
-								(~method (.getThrowable ft#) (.getMessage ft#)))
-						(isa? (class o#) Throwable)
-							(~method o# msg#))))]
-			(if (isa? (class (first args#)) Marker)
-				(apply inner# (rest args#))
-				(apply inner# args#)))))
+(defn make-log-fn
+	[level {:keys [?ns-str ?file ?line]}]
+	(fn
+		([msg]
+			(timbre/log! level :p [msg] {:?ns-str ?ns-str :?file ?file :?line ?line}))
+		([msg o1 o2]
+			(let [ft (MessageFormatter/format msg o1 o2)]
+				(if-let [t (.getThrowable ft)]
+					(timbre/log! level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
+					(timbre/log! level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line}))))
+		([msg o]
+			(cond
+				(string? o)
+					(let [ft (MessageFormatter/format msg o)]
+						(if-let [t (.getThrowable ft)]
+							(timbre/log! level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
+							(timbre/log! level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})))
+				(.isArray (class o))
+					(let [ft (MessageFormatter/arrayFormat msg o)]
+						(if-let [t (.getThrowable ft)]
+							(timbre/log! level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
+							(timbre/log! level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})))
+				(isa? (class o) Throwable)
+					(timbre/log! level :p [o msg] {:?ns-str ?ns-str :?file ?file :?line ?line})))))
 
-(def -error (wrap timbre/error))
-(def -warn  (wrap timbre/warn))
-(def -info  (wrap timbre/info))
-(def -debug (wrap timbre/debug))
-(def -trace (wrap timbre/trace))
+(defmacro ^:private wrap
+	[level]
+	`(fn [this# & args#]
+		(when (timbre/log? ~level)
+			(let
+				[stack#  (.getStackTrace (Thread/currentThread))
+				 caller# (second (drop-while #(not= (.getName (.getClass this#)) (.getClassName %)) stack#))
+				 opts#
+					{:?ns-str (.getName this#)
+					 :?file   (.getFileName caller#)
+					 :?line   (.getLineNumber caller#)}
+				 log# (make-log-fn ~level opts#)]
+				(if (isa? (class (first args#)) Marker)
+					(timbre/with-context {:marker (.getName (first args#))}
+						(apply log# (rest args#)))
+					(apply log# args#))))))
+
+(def -error (wrap :error))
+(def -warn  (wrap :warn))
+(def -info  (wrap :info))
+(def -debug (wrap :debug))
+(def -trace (wrap :trace))
 
 (defn -isErrorEnabled
 	([_]   (timbre/log? :error))
