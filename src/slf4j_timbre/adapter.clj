@@ -19,6 +19,9 @@
 	[this]
 	(.state this))
 
+(defn array? [^Class class]
+	(and class (.isArray class)))
+
 (defn make-log-fn
 	[level {:keys [?ns-str ?file ?line]}]
 	(fn
@@ -31,18 +34,18 @@
 					(timbre/log! level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line}))))
 		([msg o]
 			(cond
-				(string? o)
-					(let [ft (MessageFormatter/format msg o)]
-						(if-let [t (.getThrowable ft)]
-							(timbre/log! level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
-							(timbre/log! level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})))
-				(.isArray (class o))
+				(array? (class o))
 					(let [ft (MessageFormatter/arrayFormat msg o)]
 						(if-let [t (.getThrowable ft)]
 							(timbre/log! level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
 							(timbre/log! level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})))
 				(isa? (class o) Throwable)
-					(timbre/log! level :p [o msg] {:?ns-str ?ns-str :?file ?file :?line ?line})))))
+					(timbre/log! level :p [o msg] {:?ns-str ?ns-str :?file ?file :?line ?line})
+				:else
+					(let [ft (MessageFormatter/format msg o)]
+						(if-let [t (.getThrowable ft)]
+							(timbre/log! level :p [t (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})
+							(timbre/log! level :p [  (.getMessage ft)] {:?ns-str ?ns-str :?file ?file :?line ?line})))))))
 
 (defmacro ^:private wrap
 	[level]
