@@ -32,7 +32,8 @@
 
 				`(defn ~func-sym [this# & ~args-sym]
 					(when (timbre/log? ~level)
-						(let [context#    ~(when with-marker? `{:marker (.getName (first ~args-sym))})
+						(let [context#    ~(when with-marker? `(when-let [marker# (first ~args-sym)] {:marker (.getName marker#)}))
+						      ; we do a nil check above because log4j-over-slf4j passes a null Marker instead of calling the correct (Marker-free) method
 						      ~args-sym   ~(if with-marker? `(rest ~args-sym) args-sym)
 						      stack#      (.getStackTrace (Thread/currentThread))
 						      caller#     (second (drop-while #(not= (.getName (.getClass this#)) (.getClassName %)) stack#))
