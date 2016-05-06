@@ -44,5 +44,6 @@
 			["Hello World {} {}" "Farid" "Zakaria"]
 			["Hello World {} {} {}" (to-array ["What" "a" "Beautiful Day!"])]
 			["Hello World" (Exception. "test")]
+			["Hello World" (identity nil)]
 			["Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")])]
 			)))
