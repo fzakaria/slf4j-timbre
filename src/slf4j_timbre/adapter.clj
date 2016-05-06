@@ -20,6 +20,10 @@
 	(.state this))
 
 (defmacro define-methods
+	"Defines the various overloads for a given logging method (e.g., -info).
+	Several have the same arity so we use an undocumented Clojure feature [1] to specify their type signatures.
+	This macro expands into a (do ...) sexpr containing a defn for each of the ten variants declared in the Logger interface.
+	[1] https://groups.google.com/d/embed/msg/clojure/KmNbLo8xTSs/d1Rs3Cs6DbAJ"
 	[method-name level]
 	`(do
 		~@(for [signature    ["-String" "-String-Object" "-String-Object-Object" "-String-Object<>" "-String-Throwable"]
