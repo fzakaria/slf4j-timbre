@@ -5,13 +5,13 @@
 		{:name "Eclipse Public License"
 		 :url "http://www.eclipse.org/legal/epl-v10.html"}
 	:dependencies
-		[[org.clojure/clojure "1.7.0"]
-		 [com.taoensso/timbre "4.3.1"]
-		 [org.slf4j/slf4j-api "1.7.14"]]
+		[[org.clojure/clojure "1.8.0"]
+		 [com.taoensso/timbre "4.8.0"]
+		 [org.slf4j/slf4j-api "1.7.22"]]
 	:profiles
 		{:dev
 			{:dependencies [[midje "1.8.3"]]
-			 :plugins [[lein-midje "3.2"]]}}
+			 :plugins [[lein-midje "3.2.1"]]}}
 	:aot :all
 	:scm
 		{:name "git"
