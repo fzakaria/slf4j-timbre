@@ -1,7 +1,7 @@
 (ns slf4j-timbre.adapter
 	(:gen-class
 		:name         com.github.fzakaria.slf4j.timbre.TimbreLoggerAdapter
-		:implements   [org.slf4j.Logger]
+		:implements   [org.slf4j.spi.LocationAwareLogger]
 		:state        state
 		:init         init
 		:constructors {[String] []})
@@ -9,7 +9,8 @@
 		[taoensso.timbre :as timbre])
 	(:import
 		[org.slf4j.helpers FormattingTuple MessageFormatter]
-		org.slf4j.Marker))
+		org.slf4j.Marker
+		org.slf4j.spi.LocationAwareLogger))
 
 (defn -init
 	[logger-name]
@@ -18,6 +19,13 @@
 (defn -getName
 	[this]
 	(.state this))
+
+(defn- identify-caller
+	[fqcn stack]
+	(second
+		(drop-while
+			#(not= fqcn (.getClassName %))
+			stack)))
 
 (defmacro define-methods
 	"Defines the various overloads for a given logging method (e.g., -info).
@@ -40,7 +48,7 @@
 						      ; we do a nil check above because log4j-over-slf4j passes a null Marker instead of calling the correct (Marker-free) method
 						      ~args-sym   ~(if with-marker? `(rest ~args-sym) args-sym)
 						      stack#      (.getStackTrace (Thread/currentThread))
-						      caller#     (second (drop-while #(not= (.getName (.getClass this#)) (.getClassName %)) stack#))
+						      caller#     (identify-caller (.getName (.getClass this#)) stack#)
 						      ~ns-str-sym (.getName this#)
 						      ~file-sym   (.getFileName caller#)
 						      ~line-sym   (.getLineNumber caller#)]
@@ -81,6 +89,23 @@
 (define-methods "-info"  :info)
 (define-methods "-debug" :debug)
 (define-methods "-trace" :trace)
+
+(defn -log
+	[this marker fqcn level message arg-array t]
+	(assert (nil? arg-array))
+	(let [levels {LocationAwareLogger/ERROR_INT :error
+	              LocationAwareLogger/WARN_INT  :warn
+	              LocationAwareLogger/INFO_INT  :info
+	              LocationAwareLogger/DEBUG_INT :debug
+	              LocationAwareLogger/TRACE_INT :trace}
+	      stack  (.getStackTrace (Thread/currentThread))
+	      caller (identify-caller fqcn stack)]
+		(timbre/with-context (when marker {:marker (.getName marker)})
+			(timbre/log! (levels level) :p
+				[t message]
+				{:?ns-str (.getName this)
+				 :?file   (.getFileName caller)
+				 :?line   (.getLineNumber caller)}))))
 
 (defn -isErrorEnabled
 	([_]   (timbre/log? :error))
