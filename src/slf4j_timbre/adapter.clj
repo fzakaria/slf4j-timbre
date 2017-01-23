@@ -97,15 +97,16 @@
 	              LocationAwareLogger/WARN_INT  :warn
 	              LocationAwareLogger/INFO_INT  :info
 	              LocationAwareLogger/DEBUG_INT :debug
-	              LocationAwareLogger/TRACE_INT :trace}
-	      stack  (.getStackTrace (Thread/currentThread))
-	      caller (identify-caller fqcn stack)]
-		(timbre/with-context (when marker {:marker (.getName marker)})
-			(timbre/log! (levels level) :p
-				[t message]
-				{:?ns-str (.getName this)
-				 :?file   (.getFileName caller)
-				 :?line   (.getLineNumber caller)}))))
+	              LocationAwareLogger/TRACE_INT :trace}]
+		(when (timbre/log? (levels level))
+			(let [stack  (.getStackTrace (Thread/currentThread))
+			      caller (identify-caller fqcn stack)]
+				(timbre/with-context (when marker {:marker (.getName marker)})
+					(timbre/log! (levels level) :p
+						[t message]
+						{:?ns-str (.getName this)
+						 :?file   (.getFileName caller)
+						 :?line   (.getLineNumber caller)}))))))
 
 (defn -isErrorEnabled
 	([_]   (timbre/log? :error))
