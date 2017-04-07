@@ -1,4 +1,4 @@
-(defproject com.fzakaria/slf4j-timbre "0.3.4"
+(defproject com.fzakaria/slf4j-timbre "0.3.5-SNAPSHOT"
 	:description "SLF4J binding for Timbre"
 	:url "https://github.com/fzakaria/slf4j-timbre"
 	:license
@@ -12,7 +12,13 @@
 		{:dev
 			{:dependencies [[midje "1.8.3"]]
 			 :plugins [[lein-midje "3.2.1"]]}}
-	:aot :all
+	:aot
+		[slf4j-timbre.adapter
+		 slf4j-timbre.factory
+		 slf4j-timbre.static-logger-binder
+		 slf4j-timbre.static-marker-binder
+		 slf4j-timbre.static-mdc-binder]
+	:jar-exclusions [#"^((?!slf4j).)*\.class$"]
 	:scm
 		{:name "git"
 		 :url "https://github.com/fzakaria/slf4j-timbre"})
