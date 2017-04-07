@@ -1,4 +1,4 @@
-(defproject com.fzakaria/slf4j-timbre "0.3.5-SNAPSHOT"
+(defproject com.fzakaria/slf4j-timbre "0.3.5"
 	:description "SLF4J binding for Timbre"
 	:url "https://github.com/fzakaria/slf4j-timbre"
 	:license
