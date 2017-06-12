@@ -6,8 +6,8 @@
 		 :url "http://www.eclipse.org/legal/epl-v10.html"}
 	:dependencies
 		[[org.clojure/clojure "1.8.0"]
-		 [com.taoensso/timbre "4.8.0"]
-		 [org.slf4j/slf4j-api "1.7.22"]]
+		 [com.taoensso/timbre "4.10.0"]
+		 [org.slf4j/slf4j-api "1.7.25"]]
 	:profiles
 		{:dev
 			{:dependencies [[midje "1.8.3"]]
