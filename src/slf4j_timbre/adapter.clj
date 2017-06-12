@@ -24,7 +24,9 @@
 	[fqcn stack]
 	(second
 		(drop-while
-			#(not= fqcn (.getClassName %))
+			#(and
+				(not= fqcn (.getClassName %))
+				(not= 0 (clojure.string/index-of (.getClassName %) (str fqcn "$"))))
 			stack)))
 
 (defmacro define-methods
@@ -91,22 +93,28 @@
 (define-methods "-trace" :trace)
 
 (defn -log
-	[this marker fqcn level message arg-array t]
-	(assert (nil? arg-array))
+	[this marker fqcn level fmt arg-array t]
 	(let [levels {LocationAwareLogger/ERROR_INT :error
 	              LocationAwareLogger/WARN_INT  :warn
 	              LocationAwareLogger/INFO_INT  :info
 	              LocationAwareLogger/DEBUG_INT :debug
 	              LocationAwareLogger/TRACE_INT :trace}]
 		(when (timbre/log? (levels level))
-			(let [stack  (.getStackTrace (Thread/currentThread))
-			      caller (identify-caller fqcn stack)]
+			(let [stack   (.getStackTrace (Thread/currentThread))
+			      caller  (identify-caller fqcn stack)
+			      message (.getMessage (MessageFormatter/arrayFormat fmt arg-array))]
 				(timbre/with-context (when marker {:marker (.getName marker)})
-					(timbre/log! (levels level) :p
-						[t message]
-						{:?ns-str (.getName this)
-						 :?file   (.getFileName caller)
-						 :?line   (.getLineNumber caller)}))))))
+					(if t
+						(timbre/log! (levels level) :p
+							[t message]
+							{:?ns-str (.getName this)
+							 :?file   (.getFileName caller)
+							 :?line   (.getLineNumber caller)})
+						(timbre/log! (levels level) :p
+							[message]
+							{:?ns-str (.getName this)
+							 :?file   (.getFileName caller)
+							 :?line   (.getLineNumber caller)})))))))
 
 (defn -isErrorEnabled
 	([_]   (timbre/log? :error))
