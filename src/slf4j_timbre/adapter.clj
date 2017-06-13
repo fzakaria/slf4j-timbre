@@ -22,12 +22,11 @@
 
 (defn- identify-caller
 	[fqcn stack]
-	(second
-		(drop-while
-			#(and
-				(not= fqcn (.getClassName %))
-				(not= 0 (clojure.string/index-of (.getClassName %) (str fqcn "$"))))
-			stack)))
+	(letfn [(matches [el] (= 0 (clojure.string/index-of (str (.getClassName el) "$") (str fqcn "$"))))]
+		(->> stack
+			(drop-while (comp not matches))
+			(drop-while matches)
+			(first))))
 
 (defmacro define-methods
 	"Defines the various overloads for a given logging method (e.g., -info).

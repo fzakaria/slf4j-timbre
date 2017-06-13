@@ -40,18 +40,19 @@
 				(count @log-entries) => 10
 				(map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
 
-				@log-entries => (has every? (comp #{"slf4j-timbre.t-adapter"} :?ns-str))
+				@log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
 				@log-entries => (has every? (comp #{"t_adapter.clj"} :?file))
-				@log-entries => (has every? (comp pos? :?line)))
+				@log-entries => (has every? (comp pos? :?line))
+				@log-entries => (has every? (comp #{"one two three four"} force :msg_)))
 
 			?args
-			["Hello World"]
-			["Hello World {}" "Farid"]
-			["Hello World {} {}" "Farid" "Zakaria"]
-			["Hello World {} {} {}" (to-array ["What" "a" "Beautiful Day!"])]
-			["Hello World" (Exception. "test")]
-			["Hello World" (identity nil)]
-			["Hello World {} {}" (to-array ["Farid" "Zakaria" (Exception. "test")])]
+			["one two three four"]
+			["one two three {}" "four"]
+			["one two {} {}" "three" "four"]
+			["one {} {} {}" (to-array ["two" "three" "four"])]
+			["one two three four" (Exception. "test")]
+			["one two three four" (identity nil)]
+			["one two {} {}" (to-array ["three" "four" (Exception. "test")])]
 			)
 
 		(tabular
@@ -62,15 +63,15 @@
 				(count @log-entries) => 10
 				(map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
 
-				@log-entries => (has every? (comp #{"slf4j-timbre.t-adapter"} :?ns-str))
-				@log-entries => (has every? (comp #{"t_adapter.clj"} :?file))
-				@log-entries => (has every? (comp pos? :?line)))
+				@log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
+				@log-entries => (has every? (comp pos? :?line))
+				@log-entries => (has every? (comp #{"one two three four"} force :msg_)))
 
-			?message               ?arg-array            ?t
-			"Hello world"          nil                   nil
-			"Hello world {}"       ["one"]               nil
-			"Hello world {} {}"    ["one" "two"]         nil
-			"Hello world {} {} {}" ["one" "two" "three"] nil
-			"Hello world"          nil                   (Exception. "test")
-			"Hello world {} {}"    ["one" "two"]         (Exception. "test")
+			?message             ?arg-array             ?t
+			"one two three four" nil                    nil
+			"one two three {}"   ["four"]               nil
+			"one two {} {}"      ["three" "four"]       nil
+			"one {} {} {}"       ["two" "three" "four"] nil
+			"one two three four" nil                    (Exception. "test")
+			"one two {} {}"      ["three" "four"]       (Exception. "test")
 			)))
