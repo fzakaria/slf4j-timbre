@@ -91,29 +91,42 @@
 (define-methods "-debug" :debug)
 (define-methods "-trace" :trace)
 
-(defn -log
-	[this marker fqcn level fmt arg-array t]
-	(let [levels {LocationAwareLogger/ERROR_INT :error
-	              LocationAwareLogger/WARN_INT  :warn
-	              LocationAwareLogger/INFO_INT  :info
-	              LocationAwareLogger/DEBUG_INT :debug
-	              LocationAwareLogger/TRACE_INT :trace}]
-		(when (timbre/log? (levels level))
-			(let [stack   (.getStackTrace (Thread/currentThread))
-			      caller  (identify-caller fqcn stack)
-			      message (.getMessage (MessageFormatter/arrayFormat fmt arg-array))]
-				(timbre/with-context (when marker {:marker (.getName marker)})
-					(if t
-						(timbre/log! (levels level) :p
-							[t message]
-							{:?ns-str (.getName this)
-							 :?file   (.getFileName caller)
-							 :?line   (.getLineNumber caller)})
-						(timbre/log! (levels level) :p
-							[message]
-							{:?ns-str (.getName this)
-							 :?file   (.getFileName caller)
-							 :?line   (.getLineNumber caller)})))))))
+
+; The log level we pass to timbre/log! needs to be a compile-time constant so timbre can perform compile-time elision.
+; To achieve this we make -log a multimethod which dispatches based on its level argument (e.g. LocationAwareLogger/ERROR_INT)
+; and then define a separate method for each log level which passes the corresponding keyword (e.g. :error) - a compile-time constant - to timbre.
+
+(defmulti -log
+	"-log method of LocationAwareLogger interface used by log4j-over-slf4j etc"
+	(fn [_ _ _ level _ _ _] level))
+
+(defmacro define-log-method
+	[level-const level-keyword]
+	`(defmethod -log ~level-const
+		[this# marker# fqcn# _# fmt# arg-array# t#]
+		(when (timbre/log? ~level-keyword)
+			(let [stack#   (.getStackTrace (Thread/currentThread))
+			      caller#  (identify-caller fqcn# stack#)
+			      message# (.getMessage (MessageFormatter/arrayFormat fmt# arg-array#))]
+				(timbre/with-context (when marker# {:marker (.getName marker#)})
+					(if t#
+						(timbre/log! ~level-keyword :p
+							[t# message#]
+							{:?ns-str (.getName this#)
+							 :?file   (.getFileName caller#)
+							 :?line   (.getLineNumber caller#)})
+						(timbre/log! ~level-keyword :p
+							[message#]
+							{:?ns-str (.getName this#)
+							 :?file   (.getFileName caller#)
+							 :?line   (.getLineNumber caller#)})))))))
+
+(define-log-method LocationAwareLogger/ERROR_INT :error)
+(define-log-method LocationAwareLogger/WARN_INT  :warn)
+(define-log-method LocationAwareLogger/INFO_INT  :info)
+(define-log-method LocationAwareLogger/DEBUG_INT :debug)
+(define-log-method LocationAwareLogger/TRACE_INT :trace)
+
 
 (defn -isErrorEnabled
 	([_]   (timbre/log? :error))
