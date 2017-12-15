@@ -111,15 +111,15 @@
 				(timbre/with-context (when marker# {:marker (.getName marker#)})
 					(if t#
 						(timbre/log! ~level-keyword :p
-							[t# message#]
-							{:?ns-str (.getName this#)
-							 :?file   (.getFileName caller#)
-							 :?line   (.getLineNumber caller#)})
+												 [t# message#]
+												 (cond-> {:?ns-str (.getName this#)}
+																 caller# (assoc :?file (.getFileName caller#)
+																								:?line (.getLineNumber caller#))))
 						(timbre/log! ~level-keyword :p
-							[message#]
-							{:?ns-str (.getName this#)
-							 :?file   (.getFileName caller#)
-							 :?line   (.getLineNumber caller#)})))))))
+												 [message#]
+												 (cond-> {:?ns-str (.getName this#)}
+																 caller# (assoc :?file (.getFileName caller#)
+																								:?line (.getLineNumber caller#))))))))))
 
 (define-log-method LocationAwareLogger/ERROR_INT :error)
 (define-log-method LocationAwareLogger/WARN_INT  :warn)
