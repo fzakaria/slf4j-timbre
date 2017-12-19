@@ -109,17 +109,21 @@
 			      caller#  (identify-caller fqcn# stack#)
 			      message# (.getMessage (MessageFormatter/arrayFormat fmt# arg-array#))]
 				(timbre/with-context (when marker# {:marker (.getName marker#)})
-					(if t#
-						(timbre/log! ~level-keyword :p
-							[t# message#]
-							{:?ns-str (.getName this#)
-							 :?file   (.getFileName caller#)
-							 :?line   (.getLineNumber caller#)})
-						(timbre/log! ~level-keyword :p
-							[message#]
-							{:?ns-str (.getName this#)
-							 :?file   (.getFileName caller#)
-							 :?line   (.getLineNumber caller#)})))))))
+					(if caller# ; nil when fqcn provided is incorrect (not present in call stack)
+						(if t#
+							(timbre/log! ~level-keyword :p
+								[t# message#]
+								{:?ns-str (.getName this#)
+								 :?file   (.getFileName caller#)
+								 :?line   (.getLineNumber caller#)})
+							(timbre/log! ~level-keyword :p
+								[message#]
+								{:?ns-str (.getName this#)
+								 :?file   (.getFileName caller#)
+								 :?line   (.getLineNumber caller#)}))
+						(if t#
+							(timbre/log! ~level-keyword :p [t# message#] {:?ns-str (.getName this#)})
+							(timbre/log! ~level-keyword :p    [message#] {:?ns-str (.getName this#)}))))))))
 
 (define-log-method LocationAwareLogger/ERROR_INT :error)
 (define-log-method LocationAwareLogger/WARN_INT  :warn)
