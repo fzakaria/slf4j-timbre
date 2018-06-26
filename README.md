@@ -24,7 +24,7 @@ The project also makes use of features introduced in `[com.taoensso/timbre "4.3.
 
 ## License
 
-Copyright © 2017 [Farid Zakaria](https://github.com/fzakaria), [rufoa](https://github.com/rufoa/)
+Copyright © 2018 [Farid Zakaria](https://github.com/fzakaria), [rufoa](https://github.com/rufoa/)
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
