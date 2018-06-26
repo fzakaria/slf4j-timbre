@@ -44,7 +44,7 @@
 			      line-sym   (gensym "line")]
 
 				`(defn ~func-sym [this# & ~args-sym]
-					(when (timbre/log? ~level)
+					(when (timbre/may-log? ~level)
 						(let [context#    ~(when with-marker? `(when-let [marker# (first ~args-sym)] {:marker (.getName marker#)}))
 						      ; we do a nil check above because log4j-over-slf4j passes a null Marker instead of calling the correct (Marker-free) method
 						      ~args-sym   ~(if with-marker? `(rest ~args-sym) args-sym)
@@ -104,7 +104,7 @@
 	[level-const level-keyword]
 	`(defmethod -log ~level-const
 		[this# marker# fqcn# _# fmt# arg-array# t#]
-		(when (timbre/log? ~level-keyword)
+		(when (timbre/may-log? ~level-keyword)
 			(let [stack#   (.getStackTrace (Thread/currentThread))
 			      caller#  (identify-caller fqcn# stack#)
 			      message# (.getMessage (MessageFormatter/arrayFormat fmt# arg-array#))]
@@ -133,17 +133,17 @@
 
 
 (defn -isErrorEnabled
-	([_]   (boolean (timbre/log? :error)))
-	([_ _] (boolean (timbre/log? :error))))
+	([_]   (boolean (timbre/may-log? :error)))
+	([_ _] (boolean (timbre/may-log? :error))))
 (defn -isWarnEnabled
-	([_]   (boolean (timbre/log? :warn)))
-	([_ _] (boolean (timbre/log? :warn))))
+	([_]   (boolean (timbre/may-log? :warn)))
+	([_ _] (boolean (timbre/may-log? :warn))))
 (defn -isInfoEnabled
-	([_]   (boolean (timbre/log? :info)))
-	([_ _] (boolean (timbre/log? :info))))
+	([_]   (boolean (timbre/may-log? :info)))
+	([_ _] (boolean (timbre/may-log? :info))))
 (defn -isDebugEnabled
-	([_]   (boolean (timbre/log? :debug)))
-	([_ _] (boolean (timbre/log? :debug))))
+	([_]   (boolean (timbre/may-log? :debug)))
+	([_ _] (boolean (timbre/may-log? :debug))))
 (defn -isTraceEnabled
-	([_]   (boolean (timbre/log? :trace)))
-	([_ _] (boolean (timbre/log? :trace))))
+	([_]   (boolean (timbre/may-log? :trace)))
+	([_ _] (boolean (timbre/may-log? :trace))))
