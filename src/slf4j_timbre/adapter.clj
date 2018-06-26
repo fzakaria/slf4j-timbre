@@ -133,17 +133,17 @@
 
 
 (defn -isErrorEnabled
-	([_]   (timbre/log? :error))
-	([_ _] (timbre/log? :error)))
+	([_]   (boolean (timbre/log? :error)))
+	([_ _] (boolean (timbre/log? :error))))
 (defn -isWarnEnabled
-	([_]   (timbre/log? :warn))
-	([_ _] (timbre/log? :warn)))
+	([_]   (boolean (timbre/log? :warn)))
+	([_ _] (boolean (timbre/log? :warn))))
 (defn -isInfoEnabled
-	([_]   (timbre/log? :info))
-	([_ _] (timbre/log? :info)))
+	([_]   (boolean (timbre/log? :info)))
+	([_ _] (boolean (timbre/log? :info))))
 (defn -isDebugEnabled
-	([_]   (timbre/log? :debug))
-	([_ _] (timbre/log? :debug)))
+	([_]   (boolean (timbre/log? :debug)))
+	([_ _] (boolean (timbre/log? :debug))))
 (defn -isTraceEnabled
-	([_]   (timbre/log? :trace))
-	([_ _] (timbre/log? :trace)))
+	([_]   (boolean (timbre/log? :trace)))
+	([_ _] (boolean (timbre/log? :trace))))
