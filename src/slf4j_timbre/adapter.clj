@@ -8,8 +8,7 @@
 	(:require
 		[taoensso.timbre :as timbre])
 	(:import
-		[org.slf4j.helpers FormattingTuple MessageFormatter]
-		org.slf4j.Marker
+		org.slf4j.helpers.MessageFormatter
 		org.slf4j.spi.LocationAwareLogger))
 
 (defn -init
