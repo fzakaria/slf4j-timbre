@@ -6,6 +6,7 @@
 		:init         init
 		:constructors {[String] []})
 	(:require
+		clojure.string
 		[taoensso.timbre :as timbre])
 	(:import
 		org.slf4j.helpers.MessageFormatter
