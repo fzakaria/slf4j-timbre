@@ -10,7 +10,7 @@
 		 [org.slf4j/slf4j-api "1.7.25"]]
 	:profiles
 		{:dev
-			{:dependencies [[midje "1.9.0"]]
+			{:dependencies [[midje "1.9.1"]]
 			 :plugins [[lein-midje "3.2.1"]]}}
 	:aot
 		[slf4j-timbre.adapter
