@@ -53,7 +53,8 @@
 				`(defn ~func-sym [this# & ~args-sym]
 					(when (timbre/may-log? ~level)
 						(let [context#    ~(if with-marker? `(if-let [marker# (first ~args-sym)] (assoc-if-map timbre/*context* :marker (.getName marker#)) timbre/*context*) `timbre/*context*)
-						      ; we do a nil check above because log4j-over-slf4j passes a null Marker instead of calling the correct (Marker-free) method
+						      ; we check for a null Marker above to work around a bug in log4j-over-slf4j
+						      ; see https://jira.qos.ch/projects/SLF4J/issues/SLF4J-432
 						      ~args-sym   ~(if with-marker? `(rest ~args-sym) args-sym)
 						      stack#      (.getStackTrace (Thread/currentThread))
 						      caller#     (identify-caller (.getName (.getClass this#)) stack#)
