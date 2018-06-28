@@ -1,7 +1,7 @@
 (ns slf4j-timbre.t-adapter
 	(:require
 		[taoensso.timbre :as timbre]
-		[slf4j-timbre.adapter])
+		slf4j-timbre.adapter)
 	(:use midje.sweet)
 	(:import org.slf4j.spi.LocationAwareLogger))
 
@@ -34,11 +34,14 @@
 
 		(tabular
 			(facts
-				(invoke-each logger ?args) => anything ; for side effects only
-				(invoke-each logger marker ?args) => anything ; for side effects only
+				(timbre/with-context {:foo "preserved"}
+					(invoke-each logger ?args)
+					(invoke-each logger marker ?args)) => anything ; for side effects only
 
 				(count @log-entries) => 10
 				(map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
+				(map :context @log-entries) => (has some #{{:foo "preserved"}})
+				(map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
 
 				@log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
 				@log-entries => (has every? (comp #{"t_adapter.clj"} :?file))
@@ -57,11 +60,14 @@
 
 		(tabular
 			(facts
-				(invoke-each-lal logger nil "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t) => anything ; for side effects only
-				(invoke-each-lal logger marker "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t) => anything ; for side effects only
+				(timbre/with-context {:foo "preserved"}
+					(invoke-each-lal logger nil "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t)
+					(invoke-each-lal logger marker "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t)) => anything ; for side effects only
 
 				(count @log-entries) => 10
 				(map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
+				(map :context @log-entries) => (has some #{{:foo "preserved"}})
+				(map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
 
 				@log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
 				@log-entries => (has every? (comp pos? :?line))

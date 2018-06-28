@@ -28,6 +28,13 @@
 			(drop-while matches)
 			(first))))
 
+(defn- assoc-if-map
+	"assoc only if m is a map or nil"
+	[m k v]
+	(if (or (nil? m) (map? m))
+		(assoc m k v)
+		m))
+
 (defmacro define-methods
 	"Defines the various overloads for a given logging method (e.g., -info).
 	Several have the same arity so we use an undocumented Clojure feature [1] to specify their type signatures.
@@ -45,7 +52,7 @@
 
 				`(defn ~func-sym [this# & ~args-sym]
 					(when (timbre/may-log? ~level)
-						(let [context#    ~(when with-marker? `(when-let [marker# (first ~args-sym)] {:marker (.getName marker#)}))
+						(let [context#    ~(if with-marker? `(if-let [marker# (first ~args-sym)] (assoc-if-map timbre/*context* :marker (.getName marker#)) timbre/*context*) `timbre/*context*)
 						      ; we do a nil check above because log4j-over-slf4j passes a null Marker instead of calling the correct (Marker-free) method
 						      ~args-sym   ~(if with-marker? `(rest ~args-sym) args-sym)
 						      stack#      (.getStackTrace (Thread/currentThread))
@@ -108,7 +115,7 @@
 			(let [stack#   (.getStackTrace (Thread/currentThread))
 			      caller#  (identify-caller fqcn# stack#)
 			      message# (.getMessage (MessageFormatter/arrayFormat fmt# arg-array#))]
-				(timbre/with-context (when marker# {:marker (.getName marker#)})
+				(timbre/with-context (if marker# (assoc-if-map timbre/*context* :marker (.getName marker#)) timbre/*context*)
 					(if caller# ; nil when fqcn provided is incorrect (not present in call stack)
 						(if t#
 							(timbre/log! ~level-keyword :p
