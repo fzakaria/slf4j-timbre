@@ -9,6 +9,8 @@
 		clojure.string
 		[taoensso.timbre :as timbre])
 	(:import
+		com.github.fzakaria.slf4j.timbre.TimbreLoggerAdapter
+		org.slf4j.Marker
 		org.slf4j.helpers.MessageFormatter
 		org.slf4j.spi.LocationAwareLogger))
 
@@ -17,12 +19,12 @@
 	[[] logger-name])
 
 (defn -getName
-	[this]
+	[^TimbreLoggerAdapter this]
 	(.state this))
 
-(defn- identify-caller
+(defn- identify-caller ^StackTraceElement
 	[fqcn stack]
-	(letfn [(matches [el] (= 0 (clojure.string/index-of (str (.getClassName el) "$") (str fqcn "$"))))]
+	(letfn [(matches [^StackTraceElement el] (= 0 (clojure.string/index-of (str (.getClassName el) "$") (str fqcn "$"))))]
 		(->> stack
 			(drop-while (comp not matches))
 			(drop-while matches)
@@ -50,9 +52,9 @@
 			      file-sym   (gensym "file")
 			      line-sym   (gensym "line")]
 
-				`(defn ~func-sym [this# & ~args-sym]
+				`(defn ~func-sym [^TimbreLoggerAdapter this# & ~args-sym]
 					(when (timbre/may-log? ~level)
-						(let [context#    ~(if with-marker? `(if-let [marker# (first ~args-sym)] (assoc-if-map timbre/*context* :marker (.getName marker#)) timbre/*context*) `timbre/*context*)
+						(let [context#    ~(if with-marker? `(if-let [^Marker marker# (first ~args-sym)] (assoc-if-map timbre/*context* :marker (.getName marker#)) timbre/*context*) `timbre/*context*)
 						      ; we check for a null Marker above to work around a bug in log4j-over-slf4j
 						      ; see https://jira.qos.ch/projects/SLF4J/issues/SLF4J-432
 						      ~args-sym   ~(if with-marker? `(rest ~args-sym) args-sym)
@@ -111,7 +113,7 @@
 (defmacro define-log-method
 	[level-const level-keyword]
 	`(defmethod -log ~level-const
-		[this# marker# fqcn# _# fmt# arg-array# t#]
+		[^TimbreLoggerAdapter this# ^Marker marker# fqcn# _# fmt# arg-array# t#]
 		(when (timbre/may-log? ~level-keyword)
 			(let [stack#   (.getStackTrace (Thread/currentThread))
 			      caller#  (identify-caller fqcn# stack#)
