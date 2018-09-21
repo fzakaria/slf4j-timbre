@@ -6,8 +6,7 @@
 		:init init)
 	(:require slf4j-timbre.adapter)
 	(:import
-		com.github.fzakaria.slf4j.timbre.TimbreLoggerFactory
-		com.github.fzakaria.slf4j.timbre.TimbreLoggerAdapter))
+		(com.github.fzakaria.slf4j.timbre TimbreLoggerFactory TimbreLoggerAdapter)))
 
 (defn -init
 	[]

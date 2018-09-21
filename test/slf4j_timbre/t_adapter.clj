@@ -3,7 +3,9 @@
 		[taoensso.timbre :as timbre]
 		slf4j-timbre.adapter)
 	(:use midje.sweet)
-	(:import org.slf4j.spi.LocationAwareLogger))
+	(:import
+		org.slf4j.spi.LocationAwareLogger
+		(org.slf4j LoggerFactory MarkerFactory)))
 
 
 (defmacro invoke-each
@@ -27,8 +29,8 @@
 	{:level :trace :appenders {:counter {:enabled? true :fn (fn [data] (swap! log-entries conj data))}}})
 
 
-(let [logger (org.slf4j.LoggerFactory/getLogger (str *ns*))
-      marker (org.slf4j.MarkerFactory/getMarker "marker1")]
+(let [logger (LoggerFactory/getLogger (str *ns*))
+      marker (MarkerFactory/getMarker "marker1")]
 
 	(with-state-changes [(before :facts (reset! log-entries []))]
 
