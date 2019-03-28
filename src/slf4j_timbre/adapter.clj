@@ -53,7 +53,7 @@
 			      line-sym   (gensym "line")]
 
 				`(defn ~func-sym [^TimbreLoggerAdapter this# & ~args-sym]
-					(when (timbre/may-log? ~level)
+					(when (timbre/may-log? ~level (.getName this#))
 						(let [context#    ~(if with-marker? `(if-let [^Marker marker# (first ~args-sym)] (assoc-if-map timbre/*context* :marker (.getName marker#)) timbre/*context*) `timbre/*context*)
 						      ; we check for a null Marker above to work around a bug in log4j-over-slf4j
 						      ; see https://jira.qos.ch/projects/SLF4J/issues/SLF4J-432
@@ -114,7 +114,7 @@
 	[level-const level-keyword]
 	`(defmethod -log ~level-const
 		[^TimbreLoggerAdapter this# ^Marker marker# fqcn# _# fmt# arg-array# t#]
-		(when (timbre/may-log? ~level-keyword)
+		(when (timbre/may-log? ~level-keyword (.getName this#))
 			(let [stack#   (.getStackTrace (Thread/currentThread))
 			      caller#  (identify-caller fqcn# stack#)
 			      message# (.getMessage (MessageFormatter/arrayFormat fmt# arg-array#))]
@@ -143,17 +143,17 @@
 
 
 (defn -isErrorEnabled
-	([_]   (boolean (timbre/may-log? :error)))
-	([_ _] (boolean (timbre/may-log? :error))))
+	([^TimbreLoggerAdapter this]   (boolean (timbre/may-log? :error (.getName this))))
+	([^TimbreLoggerAdapter this _] (boolean (timbre/may-log? :error (.getName this)))))
 (defn -isWarnEnabled
-	([_]   (boolean (timbre/may-log? :warn)))
-	([_ _] (boolean (timbre/may-log? :warn))))
+	([^TimbreLoggerAdapter this]   (boolean (timbre/may-log? :warn (.getName this))))
+	([^TimbreLoggerAdapter this _] (boolean (timbre/may-log? :warn (.getName this)))))
 (defn -isInfoEnabled
-	([_]   (boolean (timbre/may-log? :info)))
-	([_ _] (boolean (timbre/may-log? :info))))
+	([^TimbreLoggerAdapter this]   (boolean (timbre/may-log? :info (.getName this))))
+	([^TimbreLoggerAdapter this _] (boolean (timbre/may-log? :info (.getName this)))))
 (defn -isDebugEnabled
-	([_]   (boolean (timbre/may-log? :debug)))
-	([_ _] (boolean (timbre/may-log? :debug))))
+	([^TimbreLoggerAdapter this]   (boolean (timbre/may-log? :debug (.getName this))))
+	([^TimbreLoggerAdapter this _] (boolean (timbre/may-log? :debug (.getName this)))))
 (defn -isTraceEnabled
-	([_]   (boolean (timbre/may-log? :trace)))
-	([_ _] (boolean (timbre/may-log? :trace))))
+	([^TimbreLoggerAdapter this]   (boolean (timbre/may-log? :trace (.getName this))))
+	([^TimbreLoggerAdapter this _] (boolean (timbre/may-log? :trace (.getName this)))))
