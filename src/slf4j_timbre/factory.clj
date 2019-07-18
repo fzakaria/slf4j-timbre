@@ -14,10 +14,11 @@
 
 (defn -getLogger
 	[^TimbreLoggerFactory this logger-name]
-	(let [loggers (.state this) loggers-map @loggers]
-		(if-let [existing (get loggers-map logger-name)]
-			existing
+	(let [loggers (.state this)]
+		(or
+			(get @loggers logger-name)
 			(let [new-logger (TimbreLoggerAdapter. logger-name)]
-				(if (compare-and-set! loggers loggers-map (assoc loggers-map logger-name new-logger))
-					new-logger
-					(get @loggers logger-name))))))
+				(-> loggers
+					(swap! update logger-name #(or % new-logger))
+					(get logger-name)))
+			(throw (ex-info (str "Failed to get a logger for " logger-name) {:this this})))))
