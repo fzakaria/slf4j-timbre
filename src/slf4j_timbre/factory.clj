@@ -4,12 +4,19 @@
 		:implements [org.slf4j.ILoggerFactory]
 		:state state
 		:init init)
-	(:require slf4j-timbre.adapter)
+	(:require slf4j-timbre.adapter
+						[taoensso.timbre :as timbre])
 	(:import
 		(com.github.fzakaria.slf4j.timbre TimbreLoggerFactory TimbreLoggerAdapter)))
 
+(defonce bootstrapped (atom false))
+
 (defn -init
 	[]
+	(when-not @bootstrapped
+		(reset! bootstrapped true)
+		(let [lvl (System/getProperty "TIMBRE_LEVEL" ":info")]
+			(timbre/set-level! (keyword (subs lvl 1)))))
 	[[] (atom {})])
 
 (defn -getLogger
