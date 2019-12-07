@@ -37,6 +37,17 @@
 		(assoc m k v)
 		m))
 
+(def override-level
+	"If non-nil, logging calls we make will be wrapped with `timbre/with-level` using the level keyword set here.
+	We use this to raise the minimum logging level to a sensibly high value until the timbre end user is able to set their own *config*."
+	(atom nil))
+
+(defmacro wrap-override-level
+	[body]
+	`(if @override-level
+		(timbre/with-level @override-level ~body)
+		~body))
+
 (defmacro define-methods
 	"Defines the various overloads for a given logging method (e.g., -info).
 	Several have the same arity so we use an undocumented Clojure feature [1] to specify their type signatures.
@@ -63,36 +74,37 @@
 						      ~ns-str-sym (.getName this#)
 						      ~file-sym   (.getFileName caller#)
 						      ~line-sym   (.getLineNumber caller#)]
-							(timbre/with-context context#
-								~(case signature
-									"-String"
-									`(let [[msg#] ~args-sym]
-										(timbre/log! ~level :p [msg#] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym}))
+							(wrap-override-level
+								(timbre/with-context context#
+									~(case signature
+										"-String"
+										`(let [[msg#] ~args-sym]
+											(timbre/log! ~level :p [msg#] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym}))
 
-									"-String-Object"
-									`(let [[fmt# o#] ~args-sym
-									       ft# (MessageFormatter/format fmt# o#)]
-										(if-let [t# (.getThrowable ft#)]
-											(timbre/log! ~level :p [t# (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})
-											(timbre/log! ~level :p [   (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})))
+										"-String-Object"
+										`(let [[fmt# o#] ~args-sym
+										       ft# (MessageFormatter/format fmt# o#)]
+											(if-let [t# (.getThrowable ft#)]
+												(timbre/log! ~level :p [t# (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})
+												(timbre/log! ~level :p [   (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})))
 
-									"-String-Object-Object"
-									`(let [[fmt# o1# o2#] ~args-sym
-									       ft# (MessageFormatter/format fmt# o1# o2#)]
-										(if-let [t# (.getThrowable ft#)]
-											(timbre/log! ~level :p [t# (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})
-											(timbre/log! ~level :p [   (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})))
+										"-String-Object-Object"
+										`(let [[fmt# o1# o2#] ~args-sym
+										       ft# (MessageFormatter/format fmt# o1# o2#)]
+											(if-let [t# (.getThrowable ft#)]
+												(timbre/log! ~level :p [t# (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})
+												(timbre/log! ~level :p [   (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})))
 
-									"-String-Object<>"
-									`(let [[fmt# os#] ~args-sym
-									       ft# (MessageFormatter/arrayFormat fmt# os#)]
-										(if-let [t# (.getThrowable ft#)]
-											(timbre/log! ~level :p [t# (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})
-											(timbre/log! ~level :p [   (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})))
+										"-String-Object<>"
+										`(let [[fmt# os#] ~args-sym
+										       ft# (MessageFormatter/arrayFormat fmt# os#)]
+											(if-let [t# (.getThrowable ft#)]
+												(timbre/log! ~level :p [t# (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})
+												(timbre/log! ~level :p [   (.getMessage ft#)] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})))
 
-									"-String-Throwable"
-									`(let [[msg# t#] ~args-sym]
-										(timbre/log! ~level :p [t# msg#] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym})))))))))))
+										"-String-Throwable"
+										`(let [[msg# t#] ~args-sym]
+											(timbre/log! ~level :p [t# msg#] {:?ns-str ~ns-str-sym :?file ~file-sym :?line ~line-sym}))))))))))))
 
 
 (define-methods "-error" :error)
@@ -115,22 +127,23 @@
 			(let [stack   (.getStackTrace (Thread/currentThread))
 			      caller  (identify-caller fqcn stack)
 			      message (.getMessage (MessageFormatter/arrayFormat fmt arg-array))]
-				(timbre/with-context (if marker (assoc-if-map timbre/*context* :marker (.getName marker)) timbre/*context*)
-					(if caller ; nil when fqcn provided is incorrect (not present in call stack)
-						(if t
-							(timbre/log! level-keyword :p
-								[t message]
-								{:?ns-str (.getName this)
-								 :?file   (.getFileName caller)
-								 :?line   (.getLineNumber caller)})
-							(timbre/log! level-keyword :p
-								[message]
-								{:?ns-str (.getName this)
-								 :?file   (.getFileName caller)
-								 :?line   (.getLineNumber caller)}))
-						(if t
-							(timbre/log! ~level-keyword :p [t message] {:?ns-str (.getName this)})
-							(timbre/log! ~level-keyword :p   [message] {:?ns-str (.getName this)}))))))))
+				(wrap-override-level
+					(timbre/with-context (if marker (assoc-if-map timbre/*context* :marker (.getName marker)) timbre/*context*)
+						(if caller ; nil when fqcn provided is incorrect (not present in call stack)
+							(if t
+								(timbre/log! level-keyword :p
+									[t message]
+									{:?ns-str (.getName this)
+									 :?file   (.getFileName caller)
+									 :?line   (.getLineNumber caller)})
+								(timbre/log! level-keyword :p
+									[message]
+									{:?ns-str (.getName this)
+									 :?file   (.getFileName caller)
+									 :?line   (.getLineNumber caller)}))
+							(if t
+								(timbre/log! ~level-keyword :p [t message] {:?ns-str (.getName this)})
+								(timbre/log! ~level-keyword :p   [message] {:?ns-str (.getName this)})))))))))
 
 
 (defn -isErrorEnabled

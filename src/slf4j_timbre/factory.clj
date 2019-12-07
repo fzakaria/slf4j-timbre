@@ -4,12 +4,23 @@
 		:implements [org.slf4j.ILoggerFactory]
 		:state state
 		:init init)
-	(:require slf4j-timbre.adapter)
+	(:require
+		slf4j-timbre.adapter
+		[taoensso.timbre :as timbre])
 	(:import
 		(com.github.fzakaria.slf4j.timbre TimbreLoggerFactory TimbreLoggerAdapter)))
 
+(defonce bootstrapped? (atom false))
+
 (defn -init
 	[]
+	(when (compare-and-set! bootstrapped? false true)
+		(let [level (System/getProperty "TIMBRE_LEVEL" ":info")]
+			(reset! slf4j-timbre.adapter/override-level (keyword (subs level 1))))
+		(add-watch #'timbre/*config* ::on-first-config
+			(fn [_ _ _ _]
+				(reset! slf4j-timbre.adapter/override-level nil)
+				(remove-watch #'timbre/*config* ::on-first-config))))
 	[[] (atom {})])
 
 (defn -getLogger
