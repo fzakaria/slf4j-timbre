@@ -5,12 +5,12 @@
 		{:name "Eclipse Public License"
 		 :url "http://www.eclipse.org/legal/epl-v10.html"}
 	:dependencies
-		[[org.clojure/clojure "1.10.0"]
+		[[org.clojure/clojure "1.10.1"]
 		 [com.taoensso/timbre "4.10.0"]
-		 [org.slf4j/slf4j-api "1.7.26"]]
+		 [org.slf4j/slf4j-api "1.7.29"]]
 	:profiles
 		{:dev
-			{:dependencies [[midje "1.9.6"]]
+			{:dependencies [[midje "1.9.9"]]
 			 :plugins [[lein-midje "3.2.1"]]}}
 	:aot
 		[slf4j-timbre.adapter
