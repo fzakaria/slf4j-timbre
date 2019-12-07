@@ -1,26 +1,35 @@
 # slf4j-timbre
 
-[SLF4J](http://www.slf4j.org/) binding for Clojure's [Timbre](https://github.com/ptaoussanis/timbre) logging library
+This project is an [SLF4J](http://www.slf4j.org/) binding (interface) for Clojure's [Timbre](https://github.com/ptaoussanis/timbre) logging framework. It allows Timbre to receive log messages emitted by code designed to use SLF4J.
 
-You might depend on a Java project which is configured to use SLF4J / JCL / LOG4j / JUL. Rather than having to manage a separate logging configuration, SLF4J provides the means to have SLF4J delegate to another implementation (the default being [Logback](http://logback.qos.ch/)). This project lets you use Timbre for this instead.
+If your Clojure project depends on a Java library which speaks SLF4J – such as Jetty – but you'd rather all its logs went to your existing Timbre setup instead of needing a separate SLF4J configuration, then this project is for you.
 
 ## Usage
 
-Add `slf4j-timbre` to your project dependencies:
+Simply add `slf4j-timbre` to your project dependencies:
 
 [![Clojars Project](http://clojars.org/com.fzakaria/slf4j-timbre/latest-version.svg)](http://clojars.org/com.fzakaria/slf4j-timbre)
 
-You'll also want to make sure all other logging APIs are wrapped by SLF4J by including the following:
+That is all!
 
+## Other logging frameworks
+
+In addition to SLF4J, `slf4j-timbre` can receive logs from projects designed around Log4j, java.util.logging (JUL), and Apache Commons Logging (JCL). To do this, add the corresponding dependency to your project:
 ```clojure
-[org.slf4j/log4j-over-slf4j "1.7.14"]
-[org.slf4j/jul-to-slf4j "1.7.14"]
-[org.slf4j/jcl-over-slf4j "1.7.14"]
+[org.slf4j/log4j-over-slf4j "1.7.29"]
+[org.slf4j/jul-to-slf4j "1.7.29"]
+[org.slf4j/jcl-over-slf4j "1.7.29"]
 ```
 
-**`slf4j-timbre` requires `[org.slf4j/slf4j-api "1.7.14"]` or later so make sure your project or its dependencies are not pulling in an earlier version.**
+Logs from Log4j/JUL/JCL projects are then forwarded to SLF4J, which in turn forwards them to Timbre.
 
-The project also makes use of features introduced in `[com.taoensso/timbre "4.3.0-RC1"]` so make sure this dependency isn't being shadowed by an earlier version of Timbre in your project.
+## Troubleshooting
+
+`slf4j-timbre` requires `[org.slf4j/slf4j-api "1.7.14"]` or later, and `[com.taoensso/timbre "4.3.0-RC1"]` or later.
+
+If you are having problems, ensure your project or its (transitive) dependencies are not pulling in earlier versions of these libraries, as these may shadow the required newer versions. You can check for this using `lein deps :tree`.
+
+For other problems please [open an issue](https://github.com/fzakaria/slf4j-timbre/issues) on GitHub!
 
 ## License
 
