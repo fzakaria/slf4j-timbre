@@ -14,7 +14,7 @@
 
 (defn -init
 	[]
-	(when (compare-and-set! bootstrapped? false true)
+	(when (and (compare-and-set! bootstrapped? false true) (= timbre/*config* timbre/example-config))
 		(let [level (System/getProperty "TIMBRE_LEVEL" ":info")]
 			(reset! slf4j-timbre.adapter/override-level (keyword (subs level 1))))
 		(add-watch #'timbre/*config* ::on-first-config
