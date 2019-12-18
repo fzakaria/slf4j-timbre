@@ -1,0 +1,26 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Test on ${{ matrix.container_image }}
+
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container_image }}
+
+    strategy:
+      matrix:
+        container_image: ["adoptopenjdk/openjdk8:ubi-minimal-jre", "adoptopenjdk/openjdk11:ubi-minimal-jre", "adoptopenjdk/openjdk8-openj9:ubi-minimal-jre", "adoptopenjdk/openjdk11-openj9:ubi-minimal-jre"]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install leiningen
+        run: |
+          curl -o /usr/local/bin/lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+          chmod +x /usr/local/bin/lein
+          lein version
+      - name: Install dependencies
+        run: lein deps
+      - name: Run tests
+        run: lein midje
