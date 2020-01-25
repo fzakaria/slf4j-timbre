@@ -33,6 +33,6 @@ For other problems please [open an issue](https://github.com/fzakaria/slf4j-timb
 
 ## License
 
-Copyright © 2019 [rufoa](https://github.com/rufoa), [Farid Zakaria](https://github.com/fzakaria)
+Copyright © 2020 [rufoa](https://github.com/rufoa), [Farid Zakaria](https://github.com/fzakaria)
 
 Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
