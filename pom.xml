@@ -3,7 +3,7 @@
   <groupId>com.fzakaria</groupId>
   <artifactId>slf4j-timbre</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.18-SNAPSHOT</version>
+  <version>0.3.18</version>
   <name>slf4j-timbre</name>
   <description>SLF4J binding for Timbre</description>
   <url>https://github.com/fzakaria/slf4j-timbre</url>
@@ -17,7 +17,7 @@
     <url>https://github.com/fzakaria/slf4j-timbre</url>
     <connection>scm:git:git://github.com/fzakaria/slf4j-timbre.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/fzakaria/slf4j-timbre.git</developerConnection>
-    <tag>4132dfbafbfd4a31f4cd96fa51877fb3b9fd17ad</tag>
+    <tag>e6f9167421956d9e7eaf6562628fd75eadeddaa7</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
