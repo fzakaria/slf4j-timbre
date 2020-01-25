@@ -15,9 +15,9 @@
 	[[]])
 
 (defn -getMarkerFactory
-	[this]
+	[_]
 	@singleton-instance)
 
 (defn -getMarkerFactoryClassStr
-	[this]
+	[_]
 	(.getName BasicMarkerFactory))

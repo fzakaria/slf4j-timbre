@@ -15,9 +15,9 @@
 	[[]])
 
 (defn -getLoggerFactory
-	[this]
+	[_]
 	@singleton-instance)
 
 (defn -getLoggerFactoryClassStr
-	[this]
+	[_]
 	(.getName TimbreLoggerFactory))

@@ -8,9 +8,9 @@
 	(:import org.slf4j.helpers.NOPMDCAdapter))
 
 (defn -getMDCA
-	[this]
+	[_]
 	(NOPMDCAdapter.))
 
 (defn -getMDCAdapterClassStr
-	[this]
+	[_]
 	(.getName NOPMDCAdapter))
