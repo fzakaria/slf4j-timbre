@@ -19,7 +19,8 @@
 		 slf4j-timbre.static-marker-binder
 		 slf4j-timbre.static-mdc-binder]
 	:jvm-opts ["-Dclojure.compiler.direct-linking=true"]
-	:jar-exclusions [#"^((?!slf4j).)*\.class$"]
+	:jar-exclusions [#"\.class$"]
+	:jar-inclusions [#"slf4j.*\.class$"]
 	:scm
 		{:name "git"
 		 :url "https://github.com/fzakaria/slf4j-timbre"})
