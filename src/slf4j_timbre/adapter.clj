@@ -40,10 +40,13 @@
   (atom nil))
 
 (defmacro wrap-override-level
-  [body]
+  [& body]
   `(if @override-level
-     (timbre/with-level @override-level ~body)
-     ~body))
+     ; Timbre 4.x uses `:level` and Timbre 5.x uses `:min-level`.
+     ; We don't know which version to expect so must set both.
+     (binding [timbre/*config* (assoc timbre/*config* :level @override-level :min-level @override-level)]
+       ~@body)
+     (do ~@body)))
 
 (defmacro define-methods
   "Defines the various overloads for a given logging method (e.g., -info).
