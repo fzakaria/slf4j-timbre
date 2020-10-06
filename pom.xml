@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.fzakaria</groupId>
   <artifactId>slf4j-timbre</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.19</version>
+  <version>0.3.20</version>
   <name>slf4j-timbre</name>
   <description>SLF4J binding for Timbre</description>
   <url>https://github.com/fzakaria/slf4j-timbre</url>
@@ -17,7 +18,7 @@
     <url>https://github.com/fzakaria/slf4j-timbre</url>
     <connection>scm:git:git://github.com/fzakaria/slf4j-timbre.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/fzakaria/slf4j-timbre.git</developerConnection>
-    <tag>6cd1f44e92800b2ea753bd80983b2fb7e3d21f8a</tag>
+    <tag>00ff77edc651e14251200408db6b7b629f4ee767</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
