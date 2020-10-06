@@ -24,3 +24,7 @@ jobs:
         run: lein deps
       - name: Run tests
         run: lein midje
+      - name: Install in local repo
+        run: lein install
+      - name: Run integration tests
+        run: lein run-integration-tests
