@@ -142,8 +142,8 @@
                              :?file   (.getFileName caller)
                              :?line   (.getLineNumber caller)}))
              (if t
-               (timbre/log! ~level-keyword :p [t message] {:?ns-str (.getName this)})
-               (timbre/log! ~level-keyword :p   [message] {:?ns-str (.getName this)})))))))))
+               (timbre/log! level-keyword :p [t message] {:?ns-str (.getName this)})
+               (timbre/log! level-keyword :p   [message] {:?ns-str (.getName this)})))))))))
 
 
 (defn -isErrorEnabled
