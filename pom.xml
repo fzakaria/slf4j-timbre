@@ -4,7 +4,7 @@
   <groupId>com.fzakaria</groupId>
   <artifactId>slf4j-timbre</artifactId>
   <packaging>jar</packaging>
-  <version>0.3.20</version>
+  <version>0.3.21</version>
   <name>slf4j-timbre</name>
   <description>SLF4J binding for Timbre</description>
   <url>https://github.com/fzakaria/slf4j-timbre</url>
@@ -18,7 +18,7 @@
     <url>https://github.com/fzakaria/slf4j-timbre</url>
     <connection>scm:git:git://github.com/fzakaria/slf4j-timbre.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/fzakaria/slf4j-timbre.git</developerConnection>
-    <tag>00ff77edc651e14251200408db6b7b629f4ee767</tag>
+    <tag>b5cac66c1bc385d17fbfdfb04d3352f8e0a702a0</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -66,7 +66,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
+      <version>1.10.3</version>
     </dependency>
     <dependency>
       <groupId>com.taoensso</groupId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>midje</groupId>
       <artifactId>midje</artifactId>
-      <version>1.9.9</version>
+      <version>1.9.10</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
