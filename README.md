@@ -16,9 +16,9 @@ That is all!
 
 In addition to SLF4J, `slf4j-timbre` can receive logs from projects designed around Log4j, java.util.logging (JUL), and Apache Commons Logging (JCL). To do this, add the corresponding dependency to your project:
 ```clojure
-[org.slf4j/log4j-over-slf4j "1.7.30"]
-[org.slf4j/jul-to-slf4j "1.7.30"]
-[org.slf4j/jcl-over-slf4j "1.7.30"]
+[org.slf4j/log4j-over-slf4j "1.7.36"]
+[org.slf4j/jul-to-slf4j "1.7.36"]
+[org.slf4j/jcl-over-slf4j "1.7.36"]
 ```
 
 Logs from Log4j/JUL/JCL projects are then forwarded to SLF4J, which in turn forwards them to Timbre.
@@ -33,6 +33,6 @@ For other problems please [open an issue](https://github.com/fzakaria/slf4j-timb
 
 ## License
 
-Copyright © 2020 [rufoa](https://github.com/rufoa), [Farid Zakaria](https://github.com/fzakaria)
+Copyright © 2022 [rufoa](https://github.com/rufoa), [Farid Zakaria](https://github.com/fzakaria)
 
 Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
