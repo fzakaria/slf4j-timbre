@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        container_image: ["adoptopenjdk/openjdk8:ubi-minimal-jre", "adoptopenjdk/openjdk11:ubi-minimal-jre"]
+        container_image: ["eclipse-temurin:8", "eclipse-temurin:11", "eclipse-temurin:17", "eclipse-temurin:latest"]
 
     steps:
       - uses: actions/checkout@v1
