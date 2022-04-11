@@ -40,7 +40,7 @@
 
       (count @log-entries) => 10
       (map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
-      (map :context @log-entries) => (has some #{{:foo "preserved"}})
+      (map :context @log-entries) => (has some #{{:foo "preserved" :marker nil}})
       (map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
 
       @log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
@@ -65,7 +65,7 @@
 
       (count @log-entries) => 10
       (map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
-      (map :context @log-entries) => (has some #{{:foo "preserved"}})
+      (map :context @log-entries) => (has some #{{:foo "preserved" :marker nil}})
       (map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
 
       @log-entries => (has every? (comp #{(str *ns*)} :?ns-str))

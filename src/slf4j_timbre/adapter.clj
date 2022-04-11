@@ -27,13 +27,6 @@
          (drop-while matches)
          (first))))
 
-(defn- assoc-if-map
-  "assoc only if m is a map or nil"
-  [m k v]
-  (if (or (nil? m) (map? m))
-    (assoc m k v)
-    m))
-
 (def override-level
   "If non-nil, logging calls we make will be wrapped with `timbre/with-level` using the level keyword set here.
   We use this to raise the minimum logging level to a sensibly high value until the timbre end user is able to set their own *config*."
@@ -63,7 +56,7 @@
 
            `(defn ~func-sym [^TimbreLoggerAdapter this# & ~args-sym]
               (when (timbre/may-log? ~level (.getName this#))
-                (let [context#    ~(if with-marker? `(if-let [^Marker marker# (first ~args-sym)] (assoc-if-map timbre/*context* :marker (.getName marker#)) timbre/*context*) `timbre/*context*)
+                (let [context#    {:marker ~(when with-marker? `(when-let [^Marker marker# (first ~args-sym)] (.getName marker#)))}
                       ; we check for a null Marker above to work around a bug in log4j-over-slf4j
                       ; see https://jira.qos.ch/projects/SLF4J/issues/SLF4J-432
                       ~args-sym   ~(if with-marker? `(rest ~args-sym) args-sym)
@@ -73,7 +66,7 @@
                       ~file-sym   (.getFileName caller#)
                       ~line-sym   (.getLineNumber caller#)]
                   (wrap-override-level
-                   (timbre/with-context context#
+                   (timbre/with-context+ context#
                      ~(case signature
                         "-String"
                         `(let [[msg#] ~args-sym]
@@ -126,7 +119,7 @@
             caller  (identify-caller fqcn stack)
             message (.getMessage (MessageFormatter/arrayFormat fmt arg-array))]
         (wrap-override-level
-         (timbre/with-context (if marker (assoc-if-map timbre/*context* :marker (.getName marker)) timbre/*context*)
+         (timbre/with-context+ {:marker (when marker (.getName marker))}
            (if caller ; nil when fqcn provided is incorrect (not present in call stack)
              (if t
                (timbre/log! level-keyword :p
