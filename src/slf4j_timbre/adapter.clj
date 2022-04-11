@@ -42,9 +42,7 @@
 (defmacro wrap-override-level
   [& body]
   `(if @override-level
-     ; Timbre 4.x uses `:level` and Timbre 5.x uses `:min-level`.
-     ; We don't know which version to expect so must set both.
-     (binding [timbre/*config* (assoc timbre/*config* :level @override-level :min-level @override-level)]
+     (binding [timbre/*config* (assoc timbre/*config* :min-level @override-level)]
        ~@body)
      (do ~@body)))
 
