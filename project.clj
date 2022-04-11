@@ -26,7 +26,6 @@
   :jar-inclusions [#"slf4j.*\.class$"]
   :release-tasks [["vcs" "assert-committed"]
                   ["deploy"]
-                  ["vcs" "commit" "Update pom.xml"] ; for dependabot
                   ["vcs" "push"]]
   :scm {:name "git"
         :url "https://github.com/fzakaria/slf4j-timbre"})

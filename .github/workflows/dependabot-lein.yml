@@ -1,0 +1,16 @@
+name: dependabot-lein
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: carwow/dependabot-lein-runner@main
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
