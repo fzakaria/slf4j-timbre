@@ -16,3 +16,7 @@
     (.info logger "Hello from SLF4J")
     (.debug logger "Hello from SLF4J")
     (.trace logger "Hello from SLF4J")))
+
+
+#_;
+        (-main)

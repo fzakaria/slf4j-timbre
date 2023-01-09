@@ -3,6 +3,7 @@
             slf4j-timbre.adapter)
   (:use midje.sweet)
   (:import org.slf4j.spi.LocationAwareLogger
+           (com.github.fzakaria.slf4j.timbre TimbreServiceProvider)
            (org.slf4j LoggerFactory MarkerFactory)))
 
 
@@ -17,65 +18,68 @@
 (defn invoke-each-lal
   [logger marker fqcn message arg-array t]
   (dorun
-   (for [level [LocationAwareLogger/ERROR_INT LocationAwareLogger/WARN_INT LocationAwareLogger/INFO_INT LocationAwareLogger/DEBUG_INT LocationAwareLogger/TRACE_INT]]
-     (.log logger marker fqcn level message arg-array t))))
+    (for [level [LocationAwareLogger/ERROR_INT LocationAwareLogger/WARN_INT LocationAwareLogger/INFO_INT LocationAwareLogger/DEBUG_INT LocationAwareLogger/TRACE_INT]]
+      (.log logger marker fqcn level message arg-array t))))
 
 (def log-entries
   (atom []))
 
 (timbre/set-config!
- {:level :trace :appenders {:counter {:enabled? true :fn (fn [data] (swap! log-entries conj data))}}})
+  {:level :trace :appenders {:counter {:enabled? true :fn (fn [data] (swap! log-entries conj data))}}})
 
 
-(let [logger (LoggerFactory/getLogger (str *ns*))
-      marker (MarkerFactory/getMarker "marker1")]
+(let [provider (TimbreServiceProvider.)
+      logger-factory (.getLoggerFactory provider)
+      logger (.getLogger logger-factory (str *ns*))
+      marker-factory (.getMarkerFactory provider)
+      marker (.getMarker marker-factory "marker1")]
 
   (with-state-changes [(before :facts (reset! log-entries []))]
 
-    (tabular
-     (facts
-      (timbre/with-context {:foo "preserved"}
-        (invoke-each logger ?args)
-        (invoke-each logger marker ?args)) => anything ; for side effects only
+                      (tabular
+                        (facts
+                          (timbre/with-context {:foo "preserved"}
+                                               (invoke-each logger ?args)
+                                               (invoke-each logger marker ?args)) => anything ; for side effects only
 
-      (count @log-entries) => 10
-      (map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
-      (map :context @log-entries) => (has some #{{:foo "preserved" :marker nil}})
-      (map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
+                          (count @log-entries) => 10
+                          (map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
+                          (map :context @log-entries) => (has some #{{:foo "preserved" :marker nil}})
+                          (map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
 
-      @log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
-      @log-entries => (has every? (comp #{"t_adapter.clj"} :?file))
-      @log-entries => (has every? (comp pos? :?line))
-      @log-entries => (has every? (comp #{"one two three four"} force :msg_)))
+                          @log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
+                          @log-entries => (has every? (comp #{"t_adapter.clj"} :?file))
+                          @log-entries => (has every? (comp pos? :?line))
+                          @log-entries => (has every? (comp #{"one two three four"} force :msg_)))
 
-     ?args
-     ["one two three four"]
-     ["one two three {}" "four"]
-     ["one two {} {}" "three" "four"]
-     ["one {} {} {}" (to-array ["two" "three" "four"])]
-     ["one two three four" (Exception. "test")]
-     ["one two three four" (identity nil)]
-     ["one two {} {}" (to-array ["three" "four" (Exception. "test")])])
+                        ?args
+                        ["one two three four"]
+                        ["one two three {}" "four"]
+                        ["one two {} {}" "three" "four"]
+                        ["one {} {} {}" (to-array ["two" "three" "four"])]
+                        ["one two three four" (Exception. "test")]
+                        ["one two three four" (identity nil)]
+                        ["one two {} {}" (to-array ["three" "four" (Exception. "test")])])
 
-    (tabular
-     (facts
-      (timbre/with-context {:foo "preserved"}
-        (invoke-each-lal logger nil "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t)
-        (invoke-each-lal logger marker "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t)) => anything ; for side effects only
+                      (tabular
+                        (facts
+                          (timbre/with-context {:foo "preserved"}
+                                               (invoke-each-lal logger nil "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t)
+                                               (invoke-each-lal logger marker "slf4j_timbre.t_adapter" ?message (to-array ?arg-array) ?t)) => anything ; for side effects only
 
-      (count @log-entries) => 10
-      (map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
-      (map :context @log-entries) => (has some #{{:foo "preserved" :marker nil}})
-      (map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
+                          (count @log-entries) => 10
+                          (map :level @log-entries) => (contains [:error :warn :info :debug :trace] :in-any-order)
+                          (map :context @log-entries) => (has some #{{:foo "preserved" :marker nil}})
+                          (map :context @log-entries) => (has some #{{:foo "preserved" :marker "marker1"}})
 
-      @log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
-      @log-entries => (has every? (comp pos? :?line))
-      @log-entries => (has every? (comp #{"one two three four"} force :msg_)))
+                          @log-entries => (has every? (comp #{(str *ns*)} :?ns-str))
+                          @log-entries => (has every? (comp pos? :?line))
+                          @log-entries => (has every? (comp #{"one two three four"} force :msg_)))
 
-     ?message             ?arg-array             ?t
-     "one two three four" nil                    nil
-     "one two three {}"   ["four"]               nil
-     "one two {} {}"      ["three" "four"]       nil
-     "one {} {} {}"       ["two" "three" "four"] nil
-     "one two three four" nil                    (Exception. "test")
-     "one two {} {}"      ["three" "four"]       (Exception. "test"))))
+                        ?message ?arg-array ?t
+                        "one two three four" nil nil
+                        "one two three {}" ["four"] nil
+                        "one two {} {}" ["three" "four"] nil
+                        "one {} {} {}" ["two" "three" "four"] nil
+                        "one two three four" nil (Exception. "test")
+                        "one two {} {}" ["three" "four"] (Exception. "test"))))
