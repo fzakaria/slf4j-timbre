@@ -18,14 +18,14 @@
 (defn invoke-each-lal
   [logger marker fqcn message arg-array t]
   (dorun
-    (for [level [LocationAwareLogger/ERROR_INT LocationAwareLogger/WARN_INT LocationAwareLogger/INFO_INT LocationAwareLogger/DEBUG_INT LocationAwareLogger/TRACE_INT]]
-      (.log logger marker fqcn level message arg-array t))))
+   (for [level [LocationAwareLogger/ERROR_INT LocationAwareLogger/WARN_INT LocationAwareLogger/INFO_INT LocationAwareLogger/DEBUG_INT LocationAwareLogger/TRACE_INT]]
+     (.log logger marker fqcn level message arg-array t))))
 
 (def log-entries
   (atom []))
 
 (timbre/set-config!
-  {:level :trace :appenders {:counter {:enabled? true :fn (fn [data] (swap! log-entries conj data))}}})
+ {:level :trace :appenders {:counter {:enabled? true :fn (fn [data] (swap! log-entries conj data))}}})
 
 
 (let [provider (TimbreServiceProvider.)
@@ -37,7 +37,7 @@
   (with-state-changes [(before :facts (reset! log-entries []))]
 
                       (tabular
-                        (facts
+ (facts
                           (timbre/with-context {:foo "preserved"}
                                                (invoke-each logger ?args)
                                                (invoke-each logger marker ?args)) => anything ; for side effects only

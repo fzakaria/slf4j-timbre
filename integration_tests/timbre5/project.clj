@@ -4,5 +4,5 @@
                  [org.slf4j/slf4j-api "2.0.6"]
                  ; slf4j-timbre will be added here by lein update-in
                  ]
-            :main example.core
-            :aot [example.core])
+  :main example.core
+  :aot [example.core])
