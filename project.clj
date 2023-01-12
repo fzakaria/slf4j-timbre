@@ -2,7 +2,7 @@
   :description "SLF4J binding for Timbre"
   :url "https://github.com/fzakaria/slf4j-timbre"
   :license {:name "Eclipse Public License"
-            :url  "http://www.eclipse.org/legal/epl-v10.html"}
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.taoensso/timbre "6.0.4"]
                  [org.slf4j/slf4j-api "2.0.6"]]
@@ -25,4 +25,4 @@
                   ["deploy"]
                   ["vcs" "push"]]
   :scm {:name "git"
-        :url  "https://github.com/fzakaria/slf4j-timbre"})
+        :url "https://github.com/fzakaria/slf4j-timbre"})
