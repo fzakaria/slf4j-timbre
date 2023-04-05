@@ -5,7 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.taoensso/timbre "6.1.0"]
-                 [org.slf4j/slf4j-api "1.7.36"]]
+                 [org.slf4j/slf4j-api "2.0.7"]]
   :profiles {:dev
              {:dependencies [[midje "1.10.9"]]
               :plugins [[lein-midje "3.2.2"]
@@ -20,7 +20,8 @@
         slf4j-timbre.factory
         slf4j-timbre.static-logger-binder
         slf4j-timbre.static-marker-binder
-        slf4j-timbre.static-mdc-binder]
+        slf4j-timbre.static-mdc-binder
+        slf4j-timbre.service-provider]
   :jar-exclusions [#"\.class$"]
   :jar-inclusions [#"slf4j.*\.class$"]
   :release-tasks [["vcs" "assert-committed"]
