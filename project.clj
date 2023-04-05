@@ -11,9 +11,12 @@
               :plugins [[lein-midje "3.2.2"]
                         [lein-sub "0.3.0"]
                         [day8/lein-git-inject "0.0.15"]]
-              :sub ["integration_tests/timbre6"]
-              :aliases {"run-integration-tests" ["sub" "do" "clean," "deps,"
-                                                 "update-in" ":dependencies" "conj" "[com.fzakaria/slf4j-timbre \"lein-git-inject/version\"]" "--" "run"]}}}
+              :sub ["integration_tests/emitter-slf4j17"
+                    "integration_tests/emitter-slf4j17-java"
+                    "integration_tests/emitter-slf4j20"
+                    "integration_tests/emitter-slf4j20-java"]
+              :aliases {"run-integration-tests" ["do" "sub" "install,"
+                                                      "sub" "-s" "integration_tests/timbre6" "update-in" ":dependencies" "conj" "[com.fzakaria/slf4j-timbre \"lein-git-inject/version\"]" "--" "run"]}}}
   :middleware [leiningen.git-inject/middleware]
   :git-inject {:version-pattern #"^(\d+\.\d+\.\d+)$"}
   :aot [slf4j-timbre.adapter

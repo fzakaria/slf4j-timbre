@@ -1,8 +1,11 @@
-(defproject example "1.0.0"
+(defproject timbre6 "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.taoensso/timbre "6.1.0"]
-                 [org.slf4j/slf4j-api "1.7.36"]
+                 [emitter-slf4j17 "0.1.0-SNAPSHOT"]
+                 [emitter-slf4j17-java "0.1.0-SNAPSHOT"]
+                 [emitter-slf4j20 "0.1.0-SNAPSHOT"]
+                 [emitter-slf4j20-java "0.1.0-SNAPSHOT"]
                  ; slf4j-timbre will be added here by lein update-in
                  ]
-  :main example.core
-  :aot [example.core])
+  :main timbre6.core
+  :aot [timbre6.core])
