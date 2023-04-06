@@ -3,25 +3,29 @@
               :implements [org.slf4j.spi.SLF4JServiceProvider]
               :state state
               :init init)
-  (:import (com.github.fzakaria.slf4j.timbre TimbreLoggerFactory)
+  (:import (com.github.fzakaria.slf4j.timbre TimbreLoggerFactory TimbreServiceProvider)
            (org.slf4j.helpers NOPMDCAdapter BasicMarkerFactory)))
 
 (defn -init []
   [[] (atom {})])
 
-(defn -initialize [this]
+(defn -initialize
+  [^TimbreServiceProvider this]
   (reset! (.state this)
           {:logger-factory (TimbreLoggerFactory.)
            :marker-factory (BasicMarkerFactory.)
            :mdc-adapter (NOPMDCAdapter.)}))
 
-(defn -getLoggerFactory [this]
+(defn -getLoggerFactory
+  [^TimbreServiceProvider this]
   (:logger-factory @(.state this)))
 
-(defn -getMarkerFactory [this]
+(defn -getMarkerFactory
+  [^TimbreServiceProvider this]
   (:marker-factory @(.state this)))
 
-(defn -getMDCAdapter [this]
+(defn -getMDCAdapter
+  [^TimbreServiceProvider this]
   (:mdc-adapter @(.state this)))
 
 (defn -getRequestedApiVersion [_]

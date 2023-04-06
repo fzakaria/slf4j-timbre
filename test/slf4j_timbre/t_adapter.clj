@@ -15,7 +15,7 @@
            `(~m ~@args ~@args-rest)))))
 
 (defn invoke-each-lal
-  [logger marker fqcn message arg-array t]
+  [^LocationAwareLogger logger marker fqcn message arg-array t]
   (dorun
    (for [level [LocationAwareLogger/ERROR_INT LocationAwareLogger/WARN_INT LocationAwareLogger/INFO_INT LocationAwareLogger/DEBUG_INT LocationAwareLogger/TRACE_INT]]
      (.log logger marker fqcn level message arg-array t))))
