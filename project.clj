@@ -14,7 +14,10 @@
               :sub ["integration_tests/emitter-slf4j17"
                     "integration_tests/emitter-slf4j17-java"
                     "integration_tests/emitter-slf4j20"
-                    "integration_tests/emitter-slf4j20-java"]
+                    "integration_tests/emitter-slf4j20-java"
+                    "integration_tests/emitter-log4j2-java"
+                    "integration_tests/emitter-jcl-java"
+                    "integration_tests/emitter-jul-java"]
               :aliases {"run-integration-tests" ["do" "sub" "install,"
                                                       "sub" "-s" "integration_tests/timbre6" "update-in" ":dependencies" "conj" "[com.fzakaria/slf4j-timbre \"lein-git-inject/version\"]" "--" "run"]}}}
   :middleware [leiningen.git-inject/middleware]
