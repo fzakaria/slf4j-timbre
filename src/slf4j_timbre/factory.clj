@@ -11,14 +11,14 @@
 
 (defn -init
   []
-  (let [default-config (var-get (resolve 'taoensso.timbre/example-config))]
-    (when (and (compare-and-set! bootstrapped? false true) (= timbre/*config* default-config))
-      (let [level (or (System/getProperty "TIMBRE_LEVEL") (System/getenv "TIMBRE_LEVEL") ":info")]
-        (reset! slf4j-timbre.adapter/override-level (keyword (subs level 1))))
-      (add-watch #'timbre/*config* ::on-first-config
-                 (fn [_ _ _ _]
-                   (reset! slf4j-timbre.adapter/override-level nil)
-                   (remove-watch #'timbre/*config* ::on-first-config)))))
+  (when (and (compare-and-set! bootstrapped? false true)
+             (= (dissoc timbre/*config* :_init-config) timbre/default-config))
+    (let [level (or @#'timbre/compile-time-min-level :info)]
+      (reset! slf4j-timbre.adapter/override-level level))
+    (add-watch #'timbre/*config* ::on-first-config
+               (fn [_ _ _ _]
+                 (reset! slf4j-timbre.adapter/override-level nil)
+                 (remove-watch #'timbre/*config* ::on-first-config))))
   [[] (atom {})])
 
 (defn -getLogger
