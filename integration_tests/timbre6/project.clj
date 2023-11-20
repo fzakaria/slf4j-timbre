@@ -1,6 +1,6 @@
 (defproject timbre6 "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.11.1"]
-                 [com.taoensso/timbre "6.1.0"]
+                 [com.taoensso/timbre "6.3.1"]
                  [emitter-slf4j17 "0.1.0-SNAPSHOT"]
                  [emitter-slf4j17-java "0.1.0-SNAPSHOT"]
                  [emitter-slf4j20 "0.1.0-SNAPSHOT"]
