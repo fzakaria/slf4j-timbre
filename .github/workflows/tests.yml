@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        container_image: ["eclipse-temurin:8", "eclipse-temurin:11", "eclipse-temurin:17", "eclipse-temurin:latest"]
+        container_image: ["eclipse-temurin:8", "eclipse-temurin:11", "eclipse-temurin:17", "eclipse-temurin:21", "eclipse-temurin:latest"]
 
     steps:
       - uses: actions/checkout@v1
